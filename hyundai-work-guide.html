@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>현대백화점 협력사 근무 GUIDE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap');
+:root{
+  --g:#006B3C;--g2:#008B4F;--gold:#C9A84C;--gl:#F0F5F2;
+  --bg:#F5F6F8;--card:#fff;--text:#1A1A1A;--sub:#6B7280;
+  --bdr:#E5E8ED;--red:#D63031;--r:14px;--sh:0 2px 12px rgba(0,107,60,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden}
+.screen{display:none;flex-direction:column;min-height:100vh;animation:fa .2s ease}
+.screen.active{display:flex}
+@keyframes fa{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sa{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:90px}
+
+/* TOP BAR */
+.tb{background:var(--g);padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.bb{background:rgba(255,255,255,.15);border:none;border-radius:9px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:18px;flex-shrink:0}
+.bb:active{background:rgba(255,255,255,.3)}
+.ti{flex:1}.ti .ts{font-size:11px;color:rgba(255,255,255,.65)}.ti .tt{font-size:16px;color:#fff;font-weight:700;letter-spacing:-.3px;margin-top:1px}
+.bh{background:rgba(255,255,255,.15);border:none;border-radius:9px;padding:6px 12px;color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.bh:active{background:rgba(255,255,255,.3)}
+
+/* MAIN */
+#s-main{background:linear-gradient(170deg,var(--g) 0%,var(--g2) 45%,#005a33 100%)}
+.hero{padding:52px 24px 36px;text-align:center}
+.hero-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px}
+.hero-icon{width:52px;height:52px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;border:1.5px solid rgba(255,255,255,.2)}
+.brand{font-size:12px;color:rgba(255,255,255,.7);letter-spacing:1px}.brandtitle{font-size:19px;color:#fff;font-weight:800;letter-spacing:-.3px}
+.hero-sub{color:rgba(255,255,255,.6);font-size:13px;margin-top:4px;font-weight:300}
+.hero-line{width:40px;height:2px;background:var(--gold);margin:18px auto 0;border-radius:2px}
+.main-body{background:var(--bg);border-radius:28px 28px 0 0;flex:1;padding:28px 18px 40px}
+.sec-lbl{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.8px;text-transform:uppercase;margin-bottom:14px;padding-left:2px}
+.store-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.store-btn{background:var(--card);border:1.5px solid var(--bdr);border-radius:var(--r);padding:20px 10px 18px;cursor:pointer;text-align:center;box-shadow:var(--sh);position:relative;overflow:hidden;transition:.16s;width:100%}
+.store-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g),var(--gold));transform:scaleX(0);transition:.2s}
+.store-btn:active{transform:scale(.97)}.store-btn:active::after{transform:scaleX(1)}
+.store-btn .si{font-size:26px;display:block;margin-bottom:9px}.store-btn .sn{font-size:16px;font-weight:800;color:var(--g);display:block;margin-bottom:2px}.store-btn .sl{font-size:11px;color:var(--sub)}
+.admin-link{display:block;text-align:center;margin-top:22px;color:var(--sub);font-size:12px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* MENU */
+.menu-banner{background:var(--gl);border-bottom:1px solid #d4e5da;padding:12px 16px;display:flex;align-items:center;gap:8px}
+.menu-dot{width:8px;height:8px;border-radius:50%;background:var(--g)}
+.menu-banner span{font-size:13px;font-weight:600;color:var(--g)}
+.menu-list{padding:18px 16px 0;display:flex;flex-direction:column;gap:11px}
+.menu-card{background:var(--card);border-radius:var(--r);border:1.5px solid var(--bdr);padding:18px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:0 1px 8px rgba(0,107,60,.07);transition:.16s}
+.menu-card:active{transform:scale(.98);border-color:var(--g)}
+.menu-icon{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0}
+.menu-text{flex:1}.menu-title{font-size:15px;font-weight:700;color:var(--text);display:block}.menu-desc{font-size:12px;color:var(--sub);margin-top:3px}
+.menu-arrow{color:var(--sub);font-size:18px;opacity:.4}
+
+/* DETAIL */
+.detail-body{padding:12px 4px 20px}
+/* 고객응대 */
+.tbl-cat{font-size:13px;font-weight:700;color:var(--g);padding:10px 10px 8px;background:var(--gl);border-radius:var(--r) var(--r) 0 0;border:1.5px solid #d4e5da;border-bottom:none;margin-top:14px}
+.tbl-cat:first-child{margin-top:0}
+.tbl-wrap{border-radius:0 0 var(--r) var(--r);box-shadow:var(--sh);margin-bottom:4px}
+table{width:100%;border-collapse:collapse;background:var(--card);font-size:12px;table-layout:fixed}
+thead tr{background:var(--g)}
+thead th{color:#fff;padding:7px 6px;font-weight:600;font-size:12px;text-align:center;white-space:nowrap;overflow:hidden}
+tbody tr{border-bottom:1px solid var(--bdr)}
+tbody tr:last-child{border-bottom:none}
+tbody td{padding:7px 6px;vertical-align:middle;line-height:1.5;font-size:12px;word-break:keep-all;word-wrap:break-word;white-space:normal;text-align:center}
+.phone-btn{color:var(--g);font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:3px;background:var(--gl);padding:4px 9px;border-radius:20px;font-size:12px;white-space:nowrap;word-break:keep-all}
+.phone-btn:active{background:#c5e0cf}
+.row-img-thumb{width:56px;height:42px;object-fit:cover;border-radius:7px;cursor:pointer;display:block}
+.row-img-empty{width:56px;height:42px;background:#f0f0f0;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#ccc}
+/* 준수사항 */
+.rule-sec{background:var(--card);border-radius:var(--r);border:1.5px solid var(--bdr);margin-bottom:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,107,60,.06)}
+.rule-hdr{background:var(--g);padding:11px 14px;font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:8px}
+.rule-items{padding:12px 14px}
+.rule-item{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:13.5px;line-height:1.6}
+.rule-item:last-child{border-bottom:none;padding-bottom:0}
+.rule-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);margin-top:7px;flex-shrink:0}
+.sec-img{width:100%;max-height:180px;object-fit:cover;border-radius:0 0 12px 12px;display:block;cursor:pointer}
+/* 연락처 */
+.ext-banner{background:var(--g);color:#fff;border-radius:var(--r);padding:14px 10px;margin-bottom:14px;box-shadow:var(--sh)}
+.ext-lbl{font-size:11px;color:rgba(255,255,255,.7);margin-bottom:4px}
+.ext-num{font-size:22px;font-weight:800;letter-spacing:1px}
+.ext-hint{font-size:11.5px;color:rgba(255,255,255,.75);margin-top:5px}
+.ct-wrap{border-radius:var(--r);overflow:hidden;border:1.5px solid var(--bdr);box-shadow:var(--sh)}
+.ct-wrap table{min-width:unset}
+/* 체크리스트 */
+.cl-sec{background:var(--card);border-radius:var(--r);border:1.5px solid var(--bdr);margin-bottom:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,107,60,.06)}
+.cl-hdr{background:var(--g);padding:11px 14px;font-size:13px;font-weight:600;color:#fff}
+.cl-wrap{overflow-x:auto}
+.cl-sec .cl-img{width:100%;max-height:140px;object-fit:cover;border-radius:0 0 12px 12px;display:block;cursor:pointer}
+/* empty */
+.empty{text-align:center;padding:52px 24px;color:var(--sub)}
+.empty span{font-size:40px;display:block;margin-bottom:12px}
+.empty strong{font-size:15px;font-weight:600;display:block;margin-bottom:6px;color:var(--text)}
+.empty p{font-size:13px;line-height:1.6}
+
+/* ===== ADMIN ===== */
+.aw{padding:14px 14px 80px;display:flex;flex-direction:column;gap:10px}
+.a-group{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.5px;text-transform:uppercase;padding:6px 2px 2px}
+.a-card{background:var(--card);border-radius:var(--r);border:1.5px solid var(--bdr);overflow:hidden;box-shadow:0 1px 8px rgba(0,107,60,.06)}
+.a-card-hdr{background:#f8faf9;border-bottom:1px solid var(--bdr);padding:11px 14px;display:flex;align-items:center;justify-content:space-between}
+.a-card-hdr .aht{font-size:13px;font-weight:700;color:var(--g)}
+/* 점포 카드 */
+.store-select-card{background:var(--card);border-radius:var(--r);border:1.5px solid var(--bdr);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--sh);transition:.15s}
+.store-select-card:active{transform:scale(.98);border-color:var(--g)}
+.ssc-name{font-size:15px;font-weight:700;color:var(--g);flex:1}
+.ssc-loc{font-size:12px;color:var(--sub)}
+.ssc-arrow{color:var(--sub);font-size:18px;opacity:.4}
+/* 메뉴 선택 카드 */
+.adm-menu-card{background:var(--card);border-radius:var(--r);border:1.5px solid var(--bdr);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:var(--sh);transition:.15s}
+.adm-menu-card:active{transform:scale(.98);border-color:var(--g)}
+.amc-ico{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.amc-name{font-size:14px;font-weight:700;color:var(--text);flex:1}
+.amc-arr{color:var(--sub);font-size:18px;opacity:.4}
+/* 편집 폼 */
+.edit-section{background:var(--card);border-radius:var(--r);border:1.5px solid var(--bdr);margin-bottom:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,107,60,.06)}
+.edit-sec-hdr{background:var(--g);padding:10px 14px;font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.edit-sec-hdr span{flex:1}
+.edit-tbl{width:100%;border-collapse:collapse}
+.edit-tbl th{background:#f8faf9;padding:9px 10px;font-size:11px;font-weight:600;color:var(--sub);text-align:left;border-bottom:1px solid var(--bdr);white-space:nowrap}
+.edit-tbl td{padding:7px 8px;border-bottom:1px solid var(--bdr);vertical-align:middle}
+.edit-tbl tr:last-child td{border-bottom:none}
+.ei{width:100%;border:1.5px solid var(--bdr);border-radius:7px;padding:6px 8px;font-size:13px;font-family:inherit;outline:none;color:var(--text);min-width:60px}
+.ei:focus{border-color:var(--g)}
+.eta{width:100%;border:1.5px solid var(--bdr);border-radius:7px;padding:6px 8px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:56px;line-height:1.6}
+.eta:focus{border-color:var(--g)}
+/* 이미지 셀 */
+.img-cell{text-align:center;width:62px}
+.img-up-btn{width:52px;height:40px;background:var(--gl);border:1.5px dashed #a0c4b0;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;margin:0 auto;transition:.13s}
+.img-up-btn:active{background:#d4ead8}
+.img-preview{width:52px;height:40px;object-fit:cover;border-radius:7px;display:block;margin:0 auto;cursor:pointer}
+input[type=file]{display:none}
+/* 행 삭제 */
+.del-btn{background:none;border:1.5px solid #f5c6c6;border-radius:7px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;color:var(--red);flex-shrink:0;margin:0 auto}
+.del-btn:active{background:#fde8e8}
+/* 행 추가 */
+.btn-add-row{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px;border:1.5px dashed #a0c4b0;border-radius:0 0 var(--r) var(--r);background:transparent;font-size:13px;font-weight:600;color:var(--g);cursor:pointer;font-family:inherit}
+.btn-add-row:active{background:var(--gl)}
+/* 섹션 추가 (준수사항/체크리스트) */
+.sec-edit-block{padding:12px 14px}
+.sec-name-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sec-name-row .sei{flex:1;border:1.5px solid var(--bdr);border-radius:7px;padding:7px 10px;font-size:13px;font-family:inherit;outline:none}
+.sec-name-row .sei:focus{border-color:var(--g)}
+.sec-del-btn{background:none;border:1.5px solid #f5c6c6;border-radius:7px;padding:6px 10px;font-size:12px;color:var(--red);cursor:pointer;font-family:inherit;white-space:nowrap}
+.sec-del-btn:active{background:#fde8e8}
+.seta{width:100%;border:1.5px solid var(--bdr);border-radius:7px;padding:8px 10px;font-size:13px;font-family:inherit;outline:none;resize:vertical;min-height:90px;line-height:1.8}
+.seta:focus{border-color:var(--g)}
+.sec-img-row{margin-top:8px;display:flex;align-items:center;gap:8px}
+.sec-img-row label{font-size:12px;color:var(--sub);flex-shrink:0}
+.sec-img-preview{width:64px;height:46px;object-fit:cover;border-radius:7px;cursor:pointer;display:block}
+.sec-img-up{width:64px;height:46px;background:var(--gl);border:1.5px dashed #a0c4b0;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
+.sec-divider{height:1px;background:var(--bdr);margin:12px 0}
+.btn-add-sec{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:11px 14px;border:none;background:transparent;font-size:13px;font-weight:600;color:var(--g);cursor:pointer;font-family:inherit;border-top:1px solid var(--bdr)}
+.btn-add-sec:active{background:var(--gl)}
+/* 연락처 외부전화 */
+.base-row{padding:12px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bdr)}
+.base-row label{font-size:13px;font-weight:600;color:var(--g);flex-shrink:0}
+.base-inp{flex:1;border:1.5px solid var(--bdr);border-radius:7px;padding:8px 10px;font-size:14px;font-family:inherit;outline:none}
+.base-inp:focus{border-color:var(--g)}
+/* pw 입력 */
+.pw-row{padding:10px 14px;display:flex;align-items:center;gap:10px}
+.pw-row label{font-size:13px;color:var(--sub);flex-shrink:0;min-width:58px}
+.pw-inp{flex:1;border:1.5px solid var(--bdr);border-radius:9px;padding:8px 12px;font-size:15px;font-family:inherit;outline:none;letter-spacing:4px;text-align:center}
+.pw-inp:focus{border-color:var(--g)}
+/* 점포 추가 */
+.add-store-form{padding:14px;display:flex;flex-direction:column;gap:8px}
+.add-store-form input{width:100%;border:1.5px solid var(--bdr);border-radius:9px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none}
+.add-store-form input:focus{border-color:var(--g)}
+/* 버튼들 */
+.btn-full{width:100%;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-green{background:var(--g);color:#fff}.btn-red{background:var(--red);color:#fff}.btn-gray{background:var(--bg);color:var(--sub)}
+
+/* 저장 FAB */
+.fab{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--g);color:#fff;border:none;border-radius:50px;padding:13px 36px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 18px rgba(0,107,60,.32);z-index:50;display:none;white-space:nowrap}
+.fab.show{display:block}
+
+/* MODALS */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:200;align-items:flex-end;justify-content:center}
+.mov.open{display:flex;animation:fa .2s ease}
+.msh{background:#fff;border-radius:24px 24px 0 0;padding:28px 22px 44px;width:100%;max-width:430px;text-align:center}
+.msh h3{font-size:17px;font-weight:800;margin-bottom:6px;color:var(--g)}.msh p{font-size:14px;color:var(--sub);margin-bottom:16px}
+.mpn{font-size:24px;font-weight:800;color:var(--g);display:block;margin-bottom:22px;letter-spacing:1px}
+.mbtns{display:flex;gap:10px}
+.mbc{flex:1;padding:14px;background:var(--g);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.mbx{flex:1;padding:14px;background:var(--bg);color:var(--sub);border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+.pwm{display:none;position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:300;align-items:center;justify-content:center;padding:24px}
+.pwm.open{display:flex;animation:fa .2s ease}
+.pwb{background:#fff;border-radius:20px;padding:28px 22px;width:100%;max-width:340px;text-align:center}
+.pwb h3{font-size:18px;font-weight:800;color:var(--g);margin-bottom:5px}.pwb p{font-size:13px;color:var(--sub);margin-bottom:18px}
+.pw-big{width:100%;padding:13px;border:1.5px solid var(--bdr);border-radius:11px;font-size:22px;font-family:inherit;outline:none;letter-spacing:8px;text-align:center;margin-bottom:12px}
+.pw-big:focus{border-color:var(--g)}
+.pwe{color:var(--red);font-size:12px;margin-bottom:8px;display:none}
+.pwbs{display:flex;gap:10px}
+.pwo{flex:1;padding:13px;background:var(--g);color:#fff;border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.pwc{flex:1;padding:13px;background:var(--bg);color:var(--sub);border:none;border-radius:11px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
+/* 이미지 뷰어 */
+.iv{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:400;align-items:center;justify-content:center}
+.iv.open{display:flex}
+.iv img{max-width:94vw;max-height:84vh;object-fit:contain;border-radius:10px}
+.iv-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:none;border-radius:50%;width:36px;height:36px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+/* 이모지/배경 피커 */
+.emoji-grid{display:flex;flex-wrap:wrap;gap:6px}
+.emoji-opt{font-size:22px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:.13s}
+.emoji-opt:active,.emoji-opt.selected{border-color:var(--g);background:var(--gl)}
+.bg-grid{display:flex;flex-wrap:wrap;gap:6px}
+.bg-opt{width:28px;height:28px;border-radius:7px;cursor:pointer;border:2px solid transparent;transition:.13s}
+.bg-opt:active,.bg-opt.selected{border-color:var(--g);transform:scale(1.15)}
+</style>
+</head>
+<body>
+
+<!-- ========== S1: MAIN ========== -->
+<div id="s-main" class="screen active">
+  <div class="hero">
+    <div class="hero-row">
+      <div class="hero-icon">🏢</div>
+      <div><div class="brand">HYUNDAI DEPARTMENT STORE</div><div class="brandtitle">협력사 근무 GUIDE</div></div>
+    </div>
+    <div class="hero-sub">입점하실 점포를 선택해 주세요</div>
+    <div class="hero-line"></div>
+  </div>
+  <div class="main-body">
+    <div class="sec-lbl">📍 점포 선택</div>
+    <div class="store-grid" id="main-store-grid"></div>
+    <span class="admin-link" onclick="openPwModal()">⚙ 관리자 페이지</span>
+  </div>
+</div>
+
+<!-- ========== S2: MENU ========== -->
+<div id="s-menu" class="screen">
+  <div class="tb">
+    <button class="bb" onclick="go('main')">&#8592;</button>
+    <div class="ti"><div class="ts">현대백화점 협력사 근무 GUIDE</div><div class="tt" id="menu-title"></div></div>
+  </div>
+  <div class="menu-banner"><div class="menu-dot"></div><span id="menu-banner"></span></div>
+  <div class="sa">
+    <div class="menu-list" id="menu-list-dynamic"></div>
+  </div>
+</div>
+
+<!-- ========== S3: DETAIL ========== -->
+<div id="s-detail" class="screen">
+  <div class="tb">
+    <button class="bb" onclick="go('menu')">&#8592;</button>
+    <div class="ti"><div class="ts" id="det-sub"></div><div class="tt" id="det-title"></div></div>
+    <button class="bh" onclick="go('main')">홈</button>
+  </div>
+  <div class="sa"><div class="detail-body" id="det-body"></div></div>
+</div>
+
+<!-- ========== S4: ADMIN - 점포 선택 ========== -->
+<div id="s-admin" class="screen">
+  <div class="tb">
+    <button class="bb" onclick="go('main')">&#8592;</button>
+    <div class="ti"><div class="ts">관리자 모드</div><div class="tt">점포 선택</div></div>
+  </div>
+  <div class="sa">
+    <div class="aw">
+      <div class="a-group">⚙ 관리자 설정</div>
+      <div class="a-card">
+        <div class="a-card-hdr"><span class="aht">비밀번호 변경</span></div>
+        <div class="pw-row"><label>현재</label><input class="pw-inp" type="password" id="cur-pw" placeholder="현재 비밀번호"/></div>
+        <div class="pw-row" style="padding-top:0"><label>새 비번</label><input class="pw-inp" type="password" id="new-pw" placeholder="새 비밀번호 (4자리 이상)"/></div>
+        <div style="padding:4px 14px 14px"><button class="btn-full btn-green" onclick="changePw()">비밀번호 변경</button></div>
+      </div>
+
+      <div class="a-group">🏬 점포 선택</div>
+      <div id="admin-store-list" style="display:flex;flex-direction:column;gap:10px"></div>
+
+      <div class="a-group">➕ 점포 추가</div>
+      <div class="a-card">
+        <div class="add-store-form">
+          <input type="text" id="new-store-name" placeholder="점포명 (예: 판교점)" maxlength="20"/>
+          <input type="text" id="new-store-loc" placeholder="지역 (예: 경기 성남시)" maxlength="30"/>
+          <button class="btn-full btn-green" onclick="addStore()">점포 추가</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S5: ADMIN - 메뉴 선택 ========== -->
+<div id="s-admin-menu" class="screen">
+  <div class="tb">
+    <button class="bb" onclick="go('admin')">&#8592;</button>
+    <div class="ti"><div class="ts">관리자 모드</div><div class="tt" id="adm-store-name"></div></div>
+  </div>
+  <div class="sa">
+    <div class="aw">
+      <div class="a-group">편집할 메뉴 선택</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="adm-menu-card" onclick="goAdminEdit('menu-edit')" style="border-color:var(--gold)"><div class="amc-ico" style="background:#fef9ec">✏️</div><span class="amc-name" style="color:var(--g)">메뉴 목록 편집</span><span style="font-size:11px;color:var(--sub);margin-right:6px">이름·아이콘·설명</span><span class="amc-arr">›</span></div>
+        <div class="adm-menu-card" onclick="goAdminEdit('customer')"><div class="amc-ico" style="background:#e8f5ef">🤝</div><span class="amc-name">고객응대 및 업무지원</span><span class="amc-arr">›</span></div>
+        <div class="adm-menu-card" onclick="goAdminEdit('rules')"><div class="amc-ico" style="background:#eef1f8">📋</div><span class="amc-name">근무 준수사항</span><span class="amc-arr">›</span></div>
+        <div class="adm-menu-card" onclick="goAdminEdit('contacts')"><div class="amc-ico" style="background:#fde8e8">📞</div><span class="amc-name">주요 연락처</span><span class="amc-arr">›</span></div>
+        <div class="adm-menu-card" onclick="goAdminEdit('checklist')"><div class="amc-ico" style="background:#fef3e2">✅</div><span class="amc-name">OPEN 전 CHECK LIST</span><span class="amc-arr">›</span></div>
+      </div>
+      <div class="a-group" style="margin-top:8px">⚠️ 점포 관리</div>
+      <div class="a-card">
+        <div class="a-card-hdr"><span class="aht" id="adm-del-name"></span></div>
+        <div style="padding:10px 14px 14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:12px;color:var(--sub)">삭제 시 해당 점포의 모든 데이터가 영구 삭제됩니다.</div>
+          <button class="btn-full btn-red" onclick="deleteStore()">이 점포 삭제</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== S6: ADMIN - 편집 ========== -->
+<div id="s-admin-edit" class="screen">
+  <div class="tb">
+    <button class="bb" onclick="go('admin-menu')">&#8592;</button>
+    <div class="ti"><div class="ts" id="adm-edit-sub"></div><div class="tt" id="adm-edit-title"></div></div>
+    <button class="bh" onclick="saveEdit()">저장</button>
+  </div>
+  <div class="sa"><div class="detail-body" id="adm-edit-body"></div></div>
+</div>
+
+<!-- CALL MODAL -->
+<div class="mov" id="call-modal">
+  <div class="msh">
+    <h3>📞 전화 연결</h3><p id="call-lbl"></p>
+    <span class="mpn" id="call-num"></span>
+    <div class="mbtns"><button class="mbc" onclick="doCall()">📞 전화 걸기</button><button class="mbx" onclick="closeCM()">취소</button></div>
+  </div>
+</div>
+
+<!-- PW MODAL -->
+<div class="pwm" id="pw-modal">
+  <div class="pwb">
+    <h3>🔒 관리자 인증</h3>
+    <p>관리자 비밀번호를 입력해 주세요<br><small style="color:#aaa">(초기: 0000)</small></p>
+    <div class="pwe" id="pw-err">비밀번호가 올바르지 않습니다</div>
+    <input class="pw-big" type="password" id="pw-inp" maxlength="8" placeholder="••••"/>
+    <div class="pwbs"><button class="pwo" onclick="checkPw()">확인</button><button class="pwc" onclick="closePwModal()">취소</button></div>
+  </div>
+</div>
+
+<!-- IMG VIEWER -->
+<div class="iv" id="img-viewer" onclick="closeViewer()">
+  <button class="iv-close" onclick="closeViewer()">✕</button>
+  <img id="iv-img" src="" alt=""/>
+</div>
+
+<!-- LOADING -->
+<div id="loading-screen" style="position:fixed;inset:0;background:linear-gradient(170deg,#006B3C,#008B4F);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999">
+  <div style="font-size:48px;margin-bottom:16px">🏢</div>
+  <div style="color:#fff;font-size:16px;font-weight:700;letter-spacing:-.3px">협력사 근무 GUIDE</div>
+  <div style="color:rgba(255,255,255,.6);font-size:13px;margin-top:8px">데이터 불러오는 중...</div>
+  <div style="margin-top:24px;width:40px;height:40px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite"></div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="saveEdit()">💾 저장하기</button>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDBCx7vLv6Zf7tika9e7cXVQw6JqIhZImU",
+  authDomain: "hyundai-guide.firebaseapp.com",
+  projectId: "hyundai-guide",
+  storageBucket: "hyundai-guide.firebasestorage.app",
+  messagingSenderId: "384845468490",
+  appId: "1:384845468490:web:585e0d5ba1ba272c27e7b3"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── Firestore 읽기 ──────────────────────────────
+async function loadFromFirestore() {
+  try {
+    const snap = await getDoc(doc(db, 'guide', 'main'));
+    if (snap.exists()) {
+      const saved = snap.data();
+      if (saved.adminPw) adminPw = saved.adminPw;
+      if (saved.STORES)  STORES  = saved.STORES;
+      if (saved.DB) {
+        Object.keys(saved.DB).forEach(s => { DB[s] = saved.DB[s]; });
+      }
+    }
+  } catch(e) { console.error('Firestore 읽기 오류:', e); }
+  renderMain();
+  hideLoading();
+}
+
+// ── Firestore 쓰기 ──────────────────────────────
+window._saveToFirestore = async function() {
+  try {
+    await setDoc(doc(db, 'guide', 'main'), {
+      adminPw,
+      STORES,
+      DB
+    });
+    toast('저장되었습니다 ✓');
+  } catch(e) {
+    toast('저장 실패: ' + e.message, true);
+  }
+}
+
+// 초기 로딩
+loadFromFirestore();
+</script>
+
+<script>
+// ================================================================
+// DATA
+// ================================================================
+let adminPw = '0000';
+let curStore = '';
+let curEditMenu = '';
+let callTarget = {label:'',number:''};
+
+const DEFAULT_LOCS = {'천호점':'서울 강동구','신촌점':'서울 서대문구','미아점':'서울 강북구','킨텍스점':'경기 고양시'};
+let STORES = ['천호점','신촌점','미아점','킨텍스점'];
+
+/*
+ data[store] = {
+   loc: string,
+   customer : [{cat,item,desc,loc,phone,img}],
+   rules    : [{section, items:[string], img}],
+   contacts : {basePhone, rows:[{team,ext,img}]},
+   checklist: [{section, rows:[{cat,check,deadline,note,img}]}]
+ }
+*/
+const MENU_TITLES = {customer:'고객응대 및 업무지원',rules:'근무 준수사항',contacts:'주요 연락처',checklist:'OPEN 전 CHECK LIST'};
+
+// 점포별 기본 메뉴 목록 (관리자에서 이름/아이콘/설명 편집 가능) — initStore보다 반드시 먼저 선언
+const DEFAULT_MENUS = [
+  {key:'customer', icon:'🤝', bg:'#e8f5ef', title:'고객응대 및 업무지원', desc:'고객 서비스 안내 및 업무 지원 부서 연락처'},
+  {key:'rules',    icon:'📋', bg:'#eef1f8', title:'근무 준수사항',         desc:'근무 중 반드시 지켜야 할 공통 수칙'},
+  {key:'contacts', icon:'📞', bg:'#fde8e8', title:'주요 연락처',           desc:'점포 내 주요 부서 내선번호 안내'},
+  {key:'checklist',icon:'✅', bg:'#fef3e2', title:'OPEN 전 CHECK LIST',    desc:'영업 시작 전 필수 점검 항목'},
+];
+
+const DB = {};
+function initStore(name, loc) {
+  DB[name] = {
+    loc: loc||'',
+    menus: DEFAULT_MENUS.map(m => ({...m})),
+    customer:[], rules:[], contacts:{basePhone:'',rows:[]}, checklist:[]
+  };
+}
+STORES.forEach(s => initStore(s, DEFAULT_LOCS[s]||''));
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  document.getElementById('fab').classList.remove('show');
+  window.scrollTo(0,0);
+}
+
+// ================================================================
+// MAIN
+// ================================================================
+function renderMain() {
+  document.getElementById('main-store-grid').innerHTML = STORES.map(s =>
+    `<button class="store-btn" onclick="selectStore('${esc(s)}')">
+      <span class="si">🏬</span>
+      <span class="sn">${s}</span>
+      <span class="sl">${DB[s].loc}</span>
+    </button>`
+  ).join('');
+}
+
+function selectStore(name) {
+  curStore = name;
+  document.getElementById('menu-title').textContent = name;
+  document.getElementById('menu-banner').textContent = name + ' — 근무 가이드 메뉴';
+  // 점포별 메뉴 동적 렌더링
+  const menus = DB[name].menus || DEFAULT_MENUS;
+  document.getElementById('menu-list-dynamic').innerHTML = menus.map(m =>
+    `<div class="menu-card" onclick="goDetail('${m.key}')">
+      <div class="menu-icon" style="background:${m.bg}">${m.icon}</div>
+      <div class="menu-text">
+        <span class="menu-title">${m.title}</span>
+        <span class="menu-desc">${m.desc}</span>
+      </div>
+      <span class="menu-arrow">›</span>
+    </div>`
+  ).join('');
+  go('menu');
+}
+
+// ================================================================
+// DETAIL VIEW
+// ================================================================
+function goDetail(key) {
+  const menus = DB[curStore].menus || DEFAULT_MENUS;
+  const menu = menus.find(m => m.key === key) || {title: MENU_TITLES[key]||key};
+  document.getElementById('det-sub').textContent = curStore;
+  document.getElementById('det-title').textContent = menu.title;
+  document.getElementById('det-body').innerHTML = renderDetail(key, curStore);
+  go('detail');
+}
+
+function renderDetail(key, store) {
+  const d = DB[store];
+  if (key === 'customer') return renderCustomerView(d.customer);
+  if (key === 'rules')    return renderRulesView(d.rules);
+  if (key === 'contacts') return renderContactsView(d.contacts);
+  if (key === 'checklist')return renderChecklistView(d.checklist);
+  return '';
+}
+
+function renderCustomerView(rows) {
+  if (!rows.length) return emptyMsg();
+  const cats = [...new Set(rows.map(r=>r.cat))];
+  let h = '';
+  cats.forEach(cat => {
+    h += `<div class="tbl-cat">📌 ${cat}</div><div class="tbl-wrap"><table>
+      <thead><tr><th style="width:22%">항목</th><th>내용</th><th style="width:18%">위치</th><th style="width:30%">전화번호</th></tr></thead><tbody>`;
+    rows.filter(r=>r.cat===cat).forEach(r => {
+      h += `<tr>
+        <td><b>${r.item}</b></td><td>${r.desc}</td><td>${r.loc}</td>
+        <td><a class="phone-btn" onclick="showCall('${esc(r.item)}','${esc(r.phone)}')" href="#">📞 ${r.phone}</a></td>
+      </tr>`;
+    });
+    h += '</tbody></table></div>';
+  });
+  return h;
+}
+
+function renderRulesView(rules) {
+  if (!rules.length) return emptyMsg();
+  return rules.map(sec =>
+    `<div class="rule-sec">
+      <div class="rule-hdr">📌 ${sec.section}</div>
+      <div class="rule-items">${sec.items.map(i=>`<div class="rule-item"><div class="rule-dot"></div><div>${i}</div></div>`).join('')}</div>
+    </div>`
+  ).join('');
+}
+
+function renderContactsView(contacts) {
+  const {basePhone, rows} = contacts;
+  let h = `<div class="ext-banner">
+    <div class="ext-lbl">📞 ${curStore} 외부 대표 전화</div>
+    <div class="ext-num">${basePhone||'(미등록)'}</div>
+    <div class="ext-hint">내선번호 클릭 시 자동으로 해당 번호로 연결됩니다</div>
+  </div>`;
+  if (!rows.length) return h + emptyMsg();
+  h += `<div class="ct-wrap"><table>
+    <thead><tr><th>팀 / 부서</th><th style="width:36%">내선번호</th></tr></thead><tbody>`;
+  rows.forEach(r => {
+    const base = (basePhone||'').replace(/-+$/,'');
+    const full = base ? base+'-'+r.ext : r.ext;
+    h += `<tr>
+      <td>${r.team}</td>
+      <td><a class="phone-btn" onclick="showCall('${esc(r.team)}','${esc(full)}')" href="#">${r.ext}</a></td>
+    </tr>`;
+  });
+  h += '</tbody></table></div>';
+  return h;
+}
+
+function renderChecklistView(checklist) {
+  if (!checklist.length) return emptyMsg();
+  return checklist.map(sec => {
+    const imgEl = sec.img ? `<img class="cl-img" src="${sec.img}" onclick="openViewer('${sec.img}')" alt=""/>` : '';
+    let rows = '';
+    (sec.rows||[]).forEach(r => {
+      rows += `<tr><td>${r.cat}</td><td>${r.check}</td><td>${r.deadline}</td><td>${r.note}</td></tr>`;
+    });
+    return `<div class="cl-sec">
+      <div class="cl-hdr">📋 ${sec.section}</div>
+      <div class="cl-wrap"><table>
+        <thead><tr><th style="width:18%">구분</th><th>체크리스트</th><th style="width:18%">기한</th><th style="width:18%">비고</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+      ${imgEl}
+    </div>`;
+  }).join('');
+}
+
+function emptyMsg() {
+  return `<div class="empty"><span>📭</span><strong>등록된 내용이 없습니다</strong><p>관리자 페이지에서 내용을 입력해 주세요.</p></div>`;
+}
+
+// ================================================================
+// PHONE
+// ================================================================
+function showCall(label, number) {
+  callTarget = {label, number};
+  document.getElementById('call-lbl').textContent = label + '에 전화하시겠습니까?';
+  document.getElementById('call-num').textContent = number;
+  document.getElementById('call-modal').classList.add('open');
+}
+function closeCM() { document.getElementById('call-modal').classList.remove('open'); }
+function doCall() { window.location.href='tel:'+callTarget.number.replace(/[^0-9]/g,''); closeCM(); }
+document.getElementById('call-modal').addEventListener('click', function(e){if(e.target===this)closeCM();});
+
+// ================================================================
+// IMG VIEWER
+// ================================================================
+function openViewer(src) {
+  document.getElementById('iv-img').src = src;
+  document.getElementById('img-viewer').classList.add('open');
+}
+function closeViewer() { document.getElementById('img-viewer').classList.remove('open'); }
+
+// ================================================================
+// PW MODAL
+// ================================================================
+function openPwModal() {
+  document.getElementById('pw-inp').value='';
+  document.getElementById('pw-err').style.display='none';
+  document.getElementById('pw-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('pw-inp').focus(),100);
+}
+function closePwModal() { document.getElementById('pw-modal').classList.remove('open'); }
+function checkPw() {
+  if (document.getElementById('pw-inp').value === adminPw) {
+    closePwModal(); renderAdminStores(); go('admin');
+  } else {
+    document.getElementById('pw-err').style.display='block';
+    document.getElementById('pw-inp').value='';
+  }
+}
+document.getElementById('pw-inp').addEventListener('keydown', e => { if(e.key==='Enter') checkPw(); });
+
+// ================================================================
+// ADMIN - 점포 목록
+// ================================================================
+function renderAdminStores() {
+  document.getElementById('admin-store-list').innerHTML = STORES.map(s =>
+    `<div class="store-select-card" onclick="selectAdminStore('${esc(s)}')">
+      <span style="font-size:22px">🏬</span>
+      <span class="ssc-name">${s}</span>
+      <span class="ssc-loc">${DB[s].loc}</span>
+      <span class="ssc-arrow">›</span>
+    </div>`
+  ).join('');
+}
+
+function selectAdminStore(name) {
+  curStore = name;
+  document.getElementById('adm-store-name').textContent = name + ' 편집';
+  document.getElementById('adm-del-name').textContent = name + ' — 점포 삭제';
+  go('admin-menu');
+}
+
+function addStore() {
+  const name = document.getElementById('new-store-name').value.trim();
+  const loc  = document.getElementById('new-store-loc').value.trim();
+  if (!name) { toast('점포명을 입력해 주세요', true); return; }
+  if (STORES.includes(name)) { toast('이미 존재하는 점포명입니다', true); return; }
+  STORES.push(name);
+  initStore(name, loc);
+  document.getElementById('new-store-name').value='';
+  document.getElementById('new-store-loc').value='';
+  renderMain();
+  renderAdminStores();
+  persistSave();
+}
+
+function deleteStore() {
+  if (STORES.length <= 1) { toast('최소 1개의 점포가 필요합니다', true); return; }
+  if (!confirm(curStore + '을(를) 삭제하시겠습니까?\n모든 데이터가 삭제됩니다.')) return;
+  STORES = STORES.filter(s => s !== curStore);
+  delete DB[curStore];
+  renderMain();
+  renderAdminStores();
+  go('admin');
+  persistSave();
+}
+
+function changePw() {
+  const cur = document.getElementById('cur-pw').value;
+  const nw  = document.getElementById('new-pw').value;
+  if (cur !== adminPw) { toast('현재 비밀번호가 올바르지 않습니다', true); return; }
+  if (!nw || nw.length < 4) { toast('새 비밀번호는 4자리 이상 입력해 주세요', true); return; }
+  adminPw = nw;
+  document.getElementById('cur-pw').value='';
+  document.getElementById('new-pw').value='';
+  persistSave();
+}
+
+// ================================================================
+// ADMIN - 편집 화면
+// ================================================================
+function goAdminEdit(key) {
+  curEditMenu = key;
+  document.getElementById('adm-edit-sub').textContent = curStore;
+  if (key === 'menu-edit') {
+    document.getElementById('adm-edit-title').textContent = '메뉴 목록 편집';
+  } else {
+    const menus = DB[curStore].menus || DEFAULT_MENUS;
+    const m = menus.find(m=>m.key===key);
+    document.getElementById('adm-edit-title').textContent = (m?m.title:MENU_TITLES[key]||key) + ' 편집';
+  }
+  document.getElementById('adm-edit-body').innerHTML = renderEditForm(key);
+  document.getElementById('fab').classList.add('show');
+  go('admin-edit');
+}
+
+function renderEditForm(key) {
+  if (key==='menu-edit')  return renderMenuEdit();
+  if (key==='customer')   return renderCustomerEdit();
+  if (key==='rules')      return renderRulesEdit();
+  if (key==='contacts')   return renderContactsEdit();
+  if (key==='checklist')  return renderChecklistEdit();
+  return '';
+}
+
+// ---- 고객응대 편집 ----
+function custRow(ci, ri, r) {
+  r = r||{cat:'',item:'',desc:'',loc:'',phone:''};
+  return `<tr id="cust-row-${ci}-${ri}">
+    <td><input class="ei" id="cust-item-${ci}-${ri}" value="${r.item}" placeholder="항목명"/></td>
+    <td><input class="ei" id="cust-desc-${ci}-${ri}" value="${r.desc}" placeholder="내용"/></td>
+    <td><input class="ei" id="cust-loc-${ci}-${ri}" value="${r.loc}" placeholder="위치"/></td>
+    <td><input class="ei" id="cust-phone-${ci}-${ri}" value="${r.phone}" placeholder="전화번호"/></td>
+    <td><button class="del-btn" onclick="delCustRow(${ci},${ri})">✕</button></td>
+  </tr>`;
+}
+
+function renderCustomerEdit() {
+  const rows = DB[curStore].customer;
+  const cats = rows.length ? [...new Set(rows.map(r=>r.cat))] : [''];
+  let h = `<div id="cust-cat-container">`;
+  cats.forEach((cat, ci) => {
+    const catRows = rows.filter(r=>r.cat===cat);
+    h += custCatBlock(ci, cat, catRows);
+  });
+  h += `</div>
+  <button class="btn-add-row" style="border-radius:var(--r);margin-top:10px" onclick="addCustCat()">+ 카테고리 추가</button>`;
+  return h;
+}
+
+function custCatBlock(ci, cat, catRows) {
+  let rowsHtml = (catRows||[]).map((r, ri) => custRow(ci, ri, r)).join('');
+  return `<div class="edit-section" id="cust-cat-${ci}">
+    <div class="edit-sec-hdr">
+      <span>📌 카테고리</span>
+      <button class="del-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff" onclick="delCustCat(${ci})">✕</button>
+    </div>
+    <div style="padding:8px 10px 4px">
+      <input class="ei" id="cat-name-${ci}" value="${cat||''}" placeholder="카테고리명 (예: 고객 서비스)"/>
+    </div>
+    <table class="edit-tbl" id="cust-tbl-${ci}">
+      <thead><tr><th>항목</th><th>내용</th><th>위치</th><th>전화번호</th><th></th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>
+    <button class="btn-add-row" onclick="addCustRow(${ci})">+ 행 추가</button>
+  </div>`;
+}
+
+function addCustCat() {
+  const container = document.getElementById('cust-cat-container');
+  const ci = container.children.length;
+  container.insertAdjacentHTML('beforeend', custCatBlock(ci, '', []));
+  addCustRow(ci); // 빈 행 1개 자동 추가
+}
+
+function delCustCat(ci) {
+  const el = document.getElementById(`cust-cat-${ci}`);
+  if (el) el.remove();
+}
+
+function addCustRow(ci) {
+  const tbody = document.querySelector(`#cust-tbl-${ci} tbody`);
+  const ri = tbody.rows.length;
+  tbody.insertAdjacentHTML('beforeend', custRow(ci, ri, null));
+}
+
+function delCustRow(ci, ri) {
+  const row = document.getElementById(`cust-row-${ci}-${ri}`);
+  if (row) row.remove();
+}
+
+// ---- 준수사항 편집 ----
+function renderRulesEdit() {
+  const rules = DB[curStore].rules;
+  let h = `<div id="rules-container">`;
+  rules.forEach((sec, si) => {
+    h += ruleSecBlock(si, sec);
+  });
+  h += `</div>
+  <button class="btn-add-row" style="border-radius:var(--r);margin-top:2px" onclick="addRuleSec()">+ 섹션 추가</button>`;
+  return h;
+}
+
+function ruleSecBlock(si, sec) {
+  sec = sec||{section:'',items:[],img:''};
+  const itemsVal = (sec.items||[]).join('\n');
+  const imgEl = sec.img
+    ? `<img class="sec-img-preview" src="${sec.img}" onclick="openViewer('${sec.img}')" alt=""/><input type="file" id="rule-img-${si}" accept="image/*" onchange="uploadImgDirect(this,'rule-img-preview-${si}')"/><label for="rule-img-${si}" style="font-size:10px;color:var(--g);cursor:pointer">변경</label>`
+    : `<input type="file" id="rule-img-${si}" accept="image/*" onchange="uploadImgDirect(this,'rule-img-preview-${si}')"/><label class="sec-img-up" for="rule-img-${si}" id="rule-img-preview-${si}">📷</label>`;
+  return `<div class="edit-section" id="rule-sec-${si}">
+    <div class="edit-sec-hdr">
+      <span>📌 섹션</span>
+      <button class="del-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff" onclick="delRuleSec(${si})">✕</button>
+    </div>
+    <div class="sec-edit-block">
+      <div class="sec-name-row">
+        <input class="sei" id="rule-sec-name-${si}" value="${sec.section}" placeholder="섹션명 (예: 복장 및 용모)"/>
+      </div>
+      <textarea class="seta" id="rule-items-${si}" placeholder="항목을 줄바꿈으로 구분하여 입력하세요&#10;예)&#10;사원증을 항상 패용한다.&#10;단정한 복장을 유지한다.">${itemsVal}</textarea>
+    </div>
+  </div>`;
+}
+
+function addRuleSec() {
+  const container = document.getElementById('rules-container');
+  const si = container.children.length;
+  container.insertAdjacentHTML('beforeend', ruleSecBlock(si, null));
+}
+function delRuleSec(si) {
+  const el = document.getElementById(`rule-sec-${si}`);
+  if (el) el.remove();
+}
+
+// ---- 주요 연락처 편집 ----
+function renderContactsEdit() {
+  const {basePhone, rows} = DB[curStore].contacts;
+  let h = `<div class="edit-section">
+    <div class="edit-sec-hdr"><span>📞 외부 대표 전화번호</span></div>
+    <div class="base-row">
+      <label>외부전화</label>
+      <input class="base-inp" id="base-phone-inp" value="${basePhone}" placeholder="예: 02-2225"/>
+    </div>`;
+  h += `<table class="edit-tbl" id="contacts-tbl">
+    <thead><tr><th>팀 / 부서</th><th>내선번호</th><th></th></tr></thead><tbody>`;
+  rows.forEach((r, ri) => { h += contactRow(ri, r); });
+  h += `</tbody></table>
+    <button class="btn-add-row" onclick="addContactRow()">+ 행 추가</button>
+  </div>`;
+  return h;
+}
+
+function contactRow(ri, r) {
+  r = r||{team:'',ext:''};
+  return `<tr id="ct-row-${ri}">
+    <td><input class="ei" id="ct-team-${ri}" value="${r.team}" placeholder="팀명"/></td>
+    <td><input class="ei" id="ct-ext-${ri}" value="${r.ext}" placeholder="내선번호"/></td>
+    <td><button class="del-btn" onclick="delContactRow(${ri})">✕</button></td>
+  </tr>`;
+}
+
+function addContactRow() {
+  const tbody = document.querySelector('#contacts-tbl tbody');
+  const ri = tbody.rows.length;
+  tbody.insertAdjacentHTML('beforeend', contactRow(ri, null));
+}
+function delContactRow(ri) {
+  const row = document.getElementById(`ct-row-${ri}`);
+  if (row) row.remove();
+}
+
+// ---- 체크리스트 편집 ----
+function renderChecklistEdit() {
+  const cl = DB[curStore].checklist;
+  let h = `<div id="cl-container">`;
+  cl.forEach((sec, si) => { h += clSecBlock(si, sec); });
+  h += `</div>
+  <button class="btn-add-row" style="border-radius:var(--r);margin-top:2px" onclick="addClSec()">+ 섹션 추가</button>`;
+  return h;
+}
+
+function clSecBlock(si, sec) {
+  sec = sec||{section:'',rows:[],img:''};
+  const imgEl = sec.img
+    ? `<img class="sec-img-preview" id="cl-sec-img-prev-${si}" src="${sec.img}" onclick="openViewer('${sec.img}')" alt="" style="width:80px;height:60px;object-fit:cover;border-radius:7px;cursor:pointer"/>
+       <input type="file" id="cl-sec-img-${si}" accept="image/*" onchange="uploadSecImg(this,${si})"/>
+       <label for="cl-sec-img-${si}" style="font-size:10px;color:var(--g);cursor:pointer;display:block;text-align:center">변경</label>`
+    : `<input type="file" id="cl-sec-img-${si}" accept="image/*" onchange="uploadSecImg(this,${si})"/>
+       <label class="sec-img-up" for="cl-sec-img-${si}" id="cl-sec-img-prev-${si}">📷</label>`;
+  let rows = (sec.rows||[]).map((r,ri) => clRow(si,ri,r)).join('');
+  return `<div class="edit-section" id="cl-sec-${si}">
+    <div class="edit-sec-hdr">
+      <span>📋 섹션</span>
+      <button class="del-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff" onclick="delClSec(${si})">✕</button>
+    </div>
+    <div style="padding:8px 10px 4px">
+      <input class="ei" id="cl-sec-name-${si}" value="${sec.section}" placeholder="섹션명 (예: 매장 오픈 전)"/>
+    </div>
+    <table class="edit-tbl" id="cl-tbl-${si}">
+      <thead><tr><th>구분</th><th>체크리스트</th><th>기한</th><th>비고</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <button class="btn-add-row" onclick="addClRow(${si})">+ 행 추가</button>
+    <div style="padding:10px 12px;display:flex;align-items:center;gap:10px;border-top:1px solid var(--bdr);background:#fafafa">
+      <span style="font-size:12px;color:var(--sub);flex-shrink:0">섹션 참고사진</span>
+      <div id="cl-sec-img-wrap-${si}">${imgEl}</div>
+    </div>
+  </div>`;
+}
+
+function clRow(si, ri, r) {
+  r = r||{cat:'',check:'',deadline:'',note:''};
+  return `<tr id="cl-row-${si}-${ri}">
+    <td><input class="ei" id="cl-cat-${si}-${ri}" value="${r.cat}" placeholder="구분"/></td>
+    <td><textarea class="eta" id="cl-check-${si}-${ri}" placeholder="체크리스트 내용">${r.check}</textarea></td>
+    <td><input class="ei" id="cl-dl-${si}-${ri}" value="${r.deadline}" placeholder="기한"/></td>
+    <td><input class="ei" id="cl-note-${si}-${ri}" value="${r.note}" placeholder="비고"/></td>
+    <td><button class="del-btn" onclick="delClRow(${si},${ri})">✕</button></td>
+  </tr>`;
+}
+
+function uploadSecImg(input, si) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const src = e.target.result;
+    document.getElementById(`cl-sec-img-wrap-${si}`).innerHTML =
+      `<img class="sec-img-preview" id="cl-sec-img-prev-${si}" src="${src}" onclick="openViewer('${src}')" alt="" style="width:80px;height:60px;object-fit:cover;border-radius:7px;cursor:pointer"/>
+       <input type="file" id="cl-sec-img-${si}" accept="image/*" onchange="uploadSecImg(this,${si})"/>
+       <label for="cl-sec-img-${si}" style="font-size:10px;color:var(--g);cursor:pointer;display:block;text-align:center">변경</label>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function addClSec() {
+  const container = document.getElementById('cl-container');
+  const si = container.children.length;
+  container.insertAdjacentHTML('beforeend', clSecBlock(si, null));
+}
+function delClSec(si) { const el=document.getElementById(`cl-sec-${si}`); if(el)el.remove(); }
+function addClRow(si) {
+  const tbody = document.querySelector(`#cl-tbl-${si} tbody`);
+  const ri = tbody.rows.length;
+  tbody.insertAdjacentHTML('beforeend', clRow(si, ri, null));
+}
+function delClRow(si, ri) { const el=document.getElementById(`cl-row-${si}-${ri}`); if(el)el.remove(); }
+
+// ================================================================
+// IMAGE UPLOAD
+// ================================================================
+function uploadImg(input, labelId) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const src = e.target.result;
+    const label = document.getElementById(labelId);
+    if (label) {
+      label.outerHTML = `<img class="img-preview" id="${labelId}" src="${src}" onclick="openViewer('${src}')" alt=""/>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function uploadImgDirect(input, previewId) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const src = e.target.result;
+    const prev = document.getElementById(previewId);
+    if (prev) {
+      prev.outerHTML = `<img class="sec-img-preview" id="${previewId}" src="${src}" onclick="openViewer('${src}')" alt=""/>`;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// ================================================================
+// SAVE EDIT
+// ================================================================
+function saveEdit() {
+  if (curEditMenu === 'menu-edit') saveMenuEdit();
+  else if (curEditMenu === 'customer') saveCustomer();
+  else if (curEditMenu === 'rules') saveRules();
+  else if (curEditMenu === 'contacts') saveContacts();
+  else if (curEditMenu === 'checklist') saveChecklist();
+  persistSave();
+}
+
+// ---- 메뉴 편집 ----
+const EMOJI_PRESETS = ['🤝','📋','📞','✅','🏪','📦','🧹','⚡','🚨','🎯','📌','💼','🗂️','📢','🔔','🛡️','🏷️','🖨️','🧾','📝'];
+const BG_PRESETS   = ['#e8f5ef','#eef1f8','#fde8e8','#fef3e2','#f0eeff','#fff0f0','#e8f4fd','#f5f5e8','#fce8f3','#e8fcf5'];
+
+function renderMenuEdit() {
+  const menus = DB[curStore].menus || DEFAULT_MENUS.map(m=>({...m}));
+  let h = `<div style="padding:10px 14px 4px;font-size:12px;color:var(--sub);line-height:1.6">
+    각 메뉴의 아이콘·이름·설명을 편집하세요. 아이콘 박스를 탭하면 선택 패널이 열립니다.
+  </div><div id="menu-edit-container">`;
+  menus.forEach((m, mi) => { h += menuEditBlock(mi, m); });
+  h += `</div>
+  <button class="btn-add-row" style="border-radius:var(--r);margin-top:10px" onclick="addMenuBlock()">+ 메뉴 추가</button>`;
+  return h;
+}
+
+function menuEditBlock(mi, m) {
+  m = m || {key:'custom-'+Date.now(), icon:'📌', bg:'#e8f5ef', title:'', desc:''};
+  const emojiOpts = EMOJI_PRESETS.map(e =>
+    `<span class="emoji-opt${e===m.icon?' selected':''}" onclick="pickEmoji(${mi},'${e}')">${e}</span>`
+  ).join('');
+  const bgOpts = BG_PRESETS.map(c =>
+    `<span class="bg-opt${c===m.bg?' selected':''}" style="background:${c}" onclick="pickBg(${mi},'${c}')"></span>`
+  ).join('');
+  return `<div class="edit-section" id="menu-block-${mi}">
+    <div class="edit-sec-hdr">
+      <span>메뉴 ${mi+1}</span>
+      <button class="del-btn" style="background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff" onclick="delMenuBlock(${mi})">✕</button>
+    </div>
+    <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="menu-icon-picker" id="menu-icon-${mi}" data-key="${m.key}" data-bg="${m.bg}" style="background:${m.bg};width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;flex-shrink:0;border:2px solid var(--bdr)" onclick="toggleEmojiPanel(${mi})">${m.icon}</div>
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--sub);margin-bottom:4px">메뉴 이름</div>
+          <input class="ei" id="menu-title-${mi}" value="${m.title}" placeholder="메뉴 이름"/>
+        </div>
+      </div>
+      <div id="emoji-panel-${mi}" style="display:none;background:#f8faf9;border-radius:10px;padding:10px">
+        <div style="font-size:11px;color:var(--sub);margin-bottom:6px">아이콘 선택</div>
+        <div class="emoji-grid">${emojiOpts}</div>
+        <div style="font-size:11px;color:var(--sub);margin:8px 0 6px">배경색 선택</div>
+        <div class="bg-grid">${bgOpts}</div>
+        <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
+          <span style="font-size:11px;color:var(--sub);flex-shrink:0">직접 입력</span>
+          <input class="ei" id="menu-emoji-direct-${mi}" value="${m.icon}" placeholder="이모지" style="width:64px;text-align:center;font-size:18px"/>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:var(--sub);margin-bottom:4px">메뉴 설명</div>
+        <input class="ei" id="menu-desc-${mi}" value="${m.desc}" placeholder="메뉴 설명 (선택)"/>
+      </div>
+    </div>
+  </div>`;
+}
+
+function addMenuBlock() {
+  const container = document.getElementById('menu-edit-container');
+  const mi = container.children.length;
+  container.insertAdjacentHTML('beforeend', menuEditBlock(mi, null));
+}
+
+function delMenuBlock(mi) {
+  const el = document.getElementById(`menu-block-${mi}`);
+  if (el) el.remove();
+}
+
+function toggleEmojiPanel(mi) {
+  const panel = document.getElementById(`emoji-panel-${mi}`);
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function pickEmoji(mi, emoji) {
+  document.getElementById(`menu-icon-${mi}`).textContent = emoji;
+  document.getElementById(`menu-emoji-direct-${mi}`).value = emoji;
+  document.querySelectorAll(`#emoji-panel-${mi} .emoji-opt`).forEach(e => e.classList.remove('selected'));
+  event.target.classList.add('selected');
+}
+
+function pickBg(mi, color) {
+  const iconEl = document.getElementById(`menu-icon-${mi}`);
+  iconEl.style.background = color;
+  iconEl.dataset.bg = color;
+  document.querySelectorAll(`#emoji-panel-${mi} .bg-opt`).forEach(e => e.classList.remove('selected'));
+  event.target.classList.add('selected');
+}
+
+function saveMenuEdit() {
+  const blocks = document.querySelectorAll('[id^="menu-block-"]');
+  DB[curStore].menus = Array.from(blocks).map((block, idx) => {
+    const mi      = block.id.split('-').pop();
+    const iconEl  = document.getElementById(`menu-icon-${mi}`);
+    const directEl= document.getElementById(`menu-emoji-direct-${mi}`);
+    const icon    = (directEl && directEl.value.trim()) || (iconEl && iconEl.textContent.trim()) || '📌';
+    const bg      = (iconEl && (iconEl.dataset.bg || iconEl.style.background)) || '#e8f5ef';
+    const key     = (iconEl && iconEl.dataset.key) || ('custom-' + idx);
+    return {
+      key,
+      icon,
+      bg,
+      title: val(`menu-title-${mi}`) || '메뉴',
+      desc:  val(`menu-desc-${mi}`)  || ''
+    };
+  });
+}
+
+function saveCustomer() {
+  DB[curStore].customer = [];
+  const cats = document.querySelectorAll('[id^="cust-cat-"]');
+  cats.forEach(catEl => {
+    const ci = catEl.id.split('-').pop();
+    const catName = (document.getElementById(`cat-name-${ci}`) || {}).value?.trim() || '';
+    const tbody = document.querySelector(`#cust-tbl-${ci} tbody`);
+    if (!tbody) return;
+    Array.from(tbody.rows).forEach(row => {
+      const parts = row.id.split('-');
+      const ri = parts.pop();
+      DB[curStore].customer.push({
+        cat:   catName,
+        item:  val(`cust-item-${ci}-${ri}`),
+        desc:  val(`cust-desc-${ci}-${ri}`),
+        loc:   val(`cust-loc-${ci}-${ri}`),
+        phone: val(`cust-phone-${ci}-${ri}`)
+      });
+    });
+  });
+}
+
+function saveRules() {
+  const secs = document.querySelectorAll('[id^="rule-sec-"]');
+  DB[curStore].rules = Array.from(secs).map(sec => {
+    const si = sec.id.split('-').pop();
+    const imgEl = sec.querySelector('.sec-img-preview');
+    return {
+      section: val(`rule-sec-name-${si}`),
+      items: (val(`rule-items-${si}`)||'').split('\n').map(s=>s.trim()).filter(Boolean),
+      img: imgEl ? imgEl.src : ''
+    };
+  });
+}
+
+function saveContacts() {
+  const basePhone = val('base-phone-inp');
+  const tbody = document.querySelector('#contacts-tbl tbody');
+  const rows = tbody ? Array.from(tbody.rows).map(row => {
+    const ri = row.id.split('-').pop();
+    return { team:val(`ct-team-${ri}`), ext:val(`ct-ext-${ri}`) };
+  }) : [];
+  DB[curStore].contacts = { basePhone, rows };
+}
+
+function saveChecklist() {
+  // querySelectorAll 대신 cl-container의 직계 자식만 읽어야 중복 방지
+  const container = document.getElementById('cl-container');
+  if (!container) return;
+  DB[curStore].checklist = Array.from(container.children).map(sec => {
+    const si = sec.id.replace('cl-sec-', '');
+    const tbody = sec.querySelector('tbody');
+    const secImgEl = sec.querySelector('.sec-img-preview');
+    const rows = tbody ? Array.from(tbody.rows).map(row => {
+      const parts = row.id.split('-'); // cl-row-SI-RI
+      const ri = parts.pop();
+      const si2 = parts.pop();
+      return {
+        cat:      val(`cl-cat-${si2}-${ri}`),
+        check:    val(`cl-check-${si2}-${ri}`),
+        deadline: val(`cl-dl-${si2}-${ri}`),
+        note:     val(`cl-note-${si2}-${ri}`)
+      };
+    }) : [];
+    return {
+      section: val(`cl-sec-name-${si}`),
+      rows,
+      img: secImgEl ? secImgEl.src : ''
+    };
+  });
+}
+
+function val(id) {
+  const el = document.getElementById(id);
+  if (!el) return '';
+  return (el.value||el.textContent||'').trim();
+}
+
+// ================================================================
+// LOADING
+// ================================================================
+function hideLoading() {
+  const el = document.getElementById('loading-screen');
+  if (el) { el.style.opacity='0'; el.style.transition='opacity .4s'; setTimeout(()=>el.remove(), 400); }
+}
+
+// ================================================================
+// TOAST
+// ================================================================
+let _tt;
+function toast(msg, isErr) {
+  let el = document.getElementById('_toast');
+  if (!el) {
+    el = document.createElement('div'); el.id='_toast';
+    el.style.cssText='position:fixed;bottom:30px;left:50%;transform:translateX(-50%);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .2s;white-space:nowrap;max-width:92vw;pointer-events:none;';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg; el.style.background=isErr?'#D63031':'#1a1a1a'; el.style.opacity='1';
+  clearTimeout(_tt); _tt=setTimeout(()=>{el.style.opacity='0';},2400);
+}
+function esc(s){ return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+// ================================================================
+// FIRESTORE 저장 (Firebase 모듈에서 window._saveToFirestore 주입됨)
+// ================================================================
+async function persistSave() {
+  if (typeof window._saveToFirestore === 'function') {
+    await window._saveToFirestore();
+  } else {
+    toast('저장되었습니다 ✓');
+  }
+}
+</script>
+</body>
+</html>

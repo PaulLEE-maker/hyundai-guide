@@ -96,6 +96,11 @@ input,textarea{font-family:inherit}
 .stat-big{display:flex;align-items:baseline;gap:5px;margin-top:8px}
 .stat-big .n{font:600 32px/1 'NanumSquare',sans-serif;color:var(--ink);font-variant-numeric:tabular-nums}
 .stat-big .u{font:400 14px 'NanumSquare',sans-serif;color:var(--muted)}
+.stat-split{display:flex;gap:10px;margin-top:8px}
+.stat-split-item{flex:1;background:var(--bg);border-radius:14px;padding:12px 14px}
+.stat-split-lbl{font:400 12px 'NanumSquare',sans-serif;color:var(--muted3)}
+.stat-split-val{font:600 19px 'NanumSquare',sans-serif;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat-split-val .u{font:400 12px 'NanumSquare',sans-serif;color:var(--muted);margin-left:2px}
 .stat-tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .stat-tag{padding:4px 9px;border-radius:12px;font:500 11px 'NanumSquare',sans-serif;font-variant-numeric:tabular-nums}
 .bars{display:flex;align-items:flex-end;gap:6px;height:96px;margin-top:22px}
@@ -214,6 +219,7 @@ input,textarea{font-family:inherit}
       <div class="hd-title">통계</div>
       <div class="chips" id="stats-scope-chips" style="margin:0"></div>
     </div>
+    <div class="chips" id="stats-dir-chips" style="margin:0 18px 4px"></div>
     <div class="stats-wrap" id="stats-body"></div>
   </div>
 
@@ -345,6 +351,7 @@ let ui = {
   peopleRel: 'all',
   peopleDir: 'all',       // all | received | sent | both
   statsScope: 'year',     // 'year' | 'all'
+  statsDir: 'sent',       // 'sent' | 'received'
   formType: '경사',
   formItem: '결혼',
   formDirection: '보냄',
@@ -656,6 +663,7 @@ function renderPeople() {
 // STATS
 // ================================================================
 function setStatsScope(s) { ui.statsScope = s; renderStats(); }
+function setStatsDir(d) { ui.statsDir = d; renderStats(); }
 
 function renderStats() {
   const curYear = new Date().getFullYear();
@@ -663,39 +671,52 @@ function renderStats() {
     <button class="chip${ui.statsScope === 'year' ? ' active' : ''}" onclick="setStatsScope('year')">${curYear}</button>
     <button class="chip${ui.statsScope === 'all' ? ' active' : ''}" onclick="setStatsScope('all')">전체</button>`;
 
+  document.getElementById('stats-dir-chips').innerHTML = `
+    <button class="chip${ui.statsDir === 'sent' ? ' active' : ''}" onclick="setStatsDir('sent')">보낸 금액</button>
+    <button class="chip${ui.statsDir === 'received' ? ' active' : ''}" onclick="setStatsDir('received')">받은 금액</button>`;
+
   const scoped = ui.statsScope === 'year' ? entries.filter(e => yearOf(e.date) === curYear) : entries.slice();
   const sent = scoped.filter(e => e.direction === '보냄');
+  const received = scoped.filter(e => e.direction === '받음');
   const totalSent = sent.reduce((s, e) => s + e.amount, 0);
-  const avg = sent.length ? Math.round(totalSent / sent.length) : 0;
-  const prevYearSent = entries.filter(e => yearOf(e.date) === curYear - 1 && e.direction === '보냄').reduce((s, e) => s + e.amount, 0);
-  const diff = totalSent - prevYearSent;
+  const totalReceived = received.reduce((s, e) => s + e.amount, 0);
+
+  const dirLabel = ui.statsDir === 'sent' ? '보낸' : '받은';
+  const dirColor = ui.statsDir === 'sent' ? 'var(--navy)' : 'var(--red)';
+  const detail = ui.statsDir === 'sent' ? sent : received;
+  const detailTotal = ui.statsDir === 'sent' ? totalSent : totalReceived;
+  const avg = detail.length ? Math.round(detailTotal / detail.length) : 0;
+  const prevYearTotal = entries
+    .filter(e => yearOf(e.date) === curYear - 1 && e.direction === (ui.statsDir === 'sent' ? '보냄' : '받음'))
+    .reduce((s, e) => s + e.amount, 0);
+  const diff = detailTotal - prevYearTotal;
 
   // ---- bar chart ----
   let buckets, barsHtml;
   if (ui.statsScope === 'year') {
     buckets = Array.from({ length: 12 }, (_, i) => ({ label: String(i + 1), amount: 0 }));
-    sent.forEach(e => { buckets[monthOf(e.date) - 1].amount += e.amount; });
+    detail.forEach(e => { buckets[monthOf(e.date) - 1].amount += e.amount; });
     const curMonth = new Date().getMonth() + 1;
     const max = Math.max(1, ...buckets.map(b => b.amount));
     barsHtml = buckets.map((b, i) => {
       const h = Math.max(4, Math.round((b.amount / max) * 80));
       const isCur = (i + 1) === curMonth;
-      const bg = b.amount === 0 ? 'var(--navy-tint)' : (isCur ? 'var(--red)' : 'var(--navy)');
+      const bg = b.amount === 0 ? 'var(--navy-tint)' : (isCur ? 'var(--red)' : dirColor);
       return `<div class="bar-col"><div class="bar" style="height:${h}px;background:${bg}"></div><span class="bar-lbl">${b.label}</span></div>`;
     }).join('');
   } else {
     const years = [...new Set(entries.map(e => yearOf(e.date)))].sort();
-    buckets = years.map(y => ({ label: String(y), amount: entries.filter(e => yearOf(e.date) === y && e.direction === '보냄').reduce((s, e) => s + e.amount, 0) }));
+    buckets = years.map(y => ({ label: String(y), amount: entries.filter(e => yearOf(e.date) === y && e.direction === (ui.statsDir === 'sent' ? '보냄' : '받음')).reduce((s, e) => s + e.amount, 0) }));
     const max = Math.max(1, ...buckets.map(b => b.amount));
     barsHtml = buckets.map(b => {
       const h = Math.max(4, Math.round((b.amount / max) * 80));
-      return `<div class="bar-col"><div class="bar" style="height:${h}px;background:var(--navy)"></div><span class="bar-lbl">${b.label}</span></div>`;
+      return `<div class="bar-col"><div class="bar" style="height:${h}px;background:${dirColor}"></div><span class="bar-lbl">${b.label}</span></div>`;
     }).join('');
   }
 
   // ---- by item type ----
   const itemMap = {};
-  sent.forEach(e => {
+  detail.forEach(e => {
     if (!itemMap[e.item]) itemMap[e.item] = { name: e.item, count: 0, amount: 0 };
     itemMap[e.item].count++; itemMap[e.item].amount += e.amount;
   });
@@ -717,7 +738,7 @@ function renderStats() {
   // ---- by relation ----
   const relMap = {};
   RELATIONS.forEach(r => { relMap[r] = { sum: 0, count: 0 }; });
-  sent.forEach(e => { const r = e.relation || '기타'; if (!relMap[r]) relMap[r] = { sum: 0, count: 0 }; relMap[r].sum += e.amount; relMap[r].count++; });
+  detail.forEach(e => { const r = e.relation || '기타'; if (!relMap[r]) relMap[r] = { sum: 0, count: 0 }; relMap[r].sum += e.amount; relMap[r].count++; });
   const relTilesHtml = Object.keys(relMap).map(r => {
     const d = relMap[r];
     const avgR = d.count ? Math.round(d.sum / d.count) : 0;
@@ -726,8 +747,22 @@ function renderStats() {
 
   document.getElementById('stats-body').innerHTML = `
     <div class="stat-card">
-      <div class="stat-lbl">${ui.statsScope === 'year' ? curYear + '년 낸 경조금' : '전체 낸 경조금'}</div>
-      <div class="stat-big"><span class="n">${won(totalSent)}</span><span class="u">원</span></div>
+      <div class="stat-lbl">${ui.statsScope === 'year' ? curYear + '년 경조금 현황' : '전체 경조금 현황'}</div>
+      <div class="stat-split">
+        <div class="stat-split-item">
+          <div class="stat-split-lbl">보낸 금액</div>
+          <div class="stat-split-val" style="color:var(--navy)">${won(totalSent)}<span class="u">원</span></div>
+        </div>
+        <div class="stat-split-item">
+          <div class="stat-split-lbl">받은 금액</div>
+          <div class="stat-split-val" style="color:var(--red)">${won(totalReceived)}<span class="u">원</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-lbl">${ui.statsScope === 'year' ? curYear + '년 ' + dirLabel + ' 금액' : '전체 ' + dirLabel + ' 금액'}</div>
+      <div class="stat-big"><span class="n">${won(detailTotal)}</span><span class="u">원</span></div>
       <div class="stat-tags">
         ${ui.statsScope === 'year' ? `<span class="stat-tag" style="background:var(--red-tint2);color:var(--red)">${(diff >= 0 ? '+' : '−') + manwon(Math.abs(diff))} 전년비</span>` : ''}
         <span class="stat-tag" style="background:var(--navy-tint);color:var(--muted3)">건당 평균 ${manwon(avg)}</span>
@@ -736,12 +771,12 @@ function renderStats() {
     </div>
 
     <div class="stat-card">
-      <div class="stat-lbl">종류별</div>
+      <div class="stat-lbl">종류별 (${dirLabel} 금액)</div>
       ${itemList.length ? `<div class="stacked">${stackedHtml}</div><div class="type-list">${typeListHtml}</div>` : `<div style="padding:20px 0;color:var(--muted);font-size:13px;text-align:center">데이터가 없습니다</div>`}
     </div>
 
     <div class="rel-card">
-      <div class="stat-lbl" style="color:rgba(47,74,122,.75)">관계별 평균 (보낸 금액)</div>
+      <div class="stat-lbl" style="color:rgba(47,74,122,.75)">관계별 평균 (${dirLabel} 금액)</div>
       <div class="rel-tiles">${relTilesHtml}</div>
     </div>`;
 }

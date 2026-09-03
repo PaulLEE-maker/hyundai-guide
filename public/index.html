@@ -55,6 +55,9 @@ input,textarea{font-family:inherit}
 .chip{padding:7px 13px;border-radius:18px;background:#fff;color:var(--muted3);font:400 12px 'NanumSquare',sans-serif;box-shadow:0 1px 2px rgba(16,20,24,.07);border:none}
 .chip.active{background:var(--ink);color:#fff;box-shadow:none}
 
+.sample-banner{margin:14px 18px 0;background:var(--red-tint);color:var(--red);border-radius:14px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font:400 12px 'NanumSquare',sans-serif}
+.sample-banner button{background:none;border:none;color:var(--red);font:600 12px 'NanumSquare',sans-serif;flex-shrink:0;white-space:nowrap}
+
 
 
 /* ---- list ---- */
@@ -187,6 +190,7 @@ input,textarea{font-family:inherit}
     </div>
 
     <div class="summary" id="home-summary"></div>
+    <div id="sample-banner-wrap"></div>
     <div class="chips" id="home-chips"></div>
     <div class="list-wrap" id="home-list"></div>
   </div>
@@ -321,168 +325,13 @@ const TYPE_COLOR = { '경사': 'var(--red)', '조사': 'var(--navy)' };
 const PALETTE = ['#c0442f','#2f4a7a','#8fa3c4','#dfe4ec','#caa24a','#5c8a6a'];
 
 const INITIAL_ENTRIES = [
-  { id: 'r1', type: '경사', item: '결혼', direction: '받음', name: '차준환 전무님', relation: '직장', amount: 200000, date: '2024-05-25', memo: '참석' },
-  { id: 'r2', type: '경사', item: '결혼', direction: '받음', name: '지유진', relation: '직장', amount: 200000, date: '2024-05-25', memo: '불참' },
-  { id: 'r3', type: '경사', item: '결혼', direction: '받음', name: '이석재', relation: '직장', amount: 200000, date: '2024-05-25', memo: '참석' },
-  { id: 'r4', type: '경사', item: '결혼', direction: '받음', name: '신성호', relation: '직장', amount: 200000, date: '2024-05-25', memo: '참석' },
-  { id: 'r5', type: '경사', item: '결혼', direction: '받음', name: '선유나', relation: '직장', amount: 200000, date: '2024-05-25', memo: '참석' },
-  { id: 'r6', type: '경사', item: '결혼', direction: '받음', name: '서형인', relation: '직장', amount: 200000, date: '2024-05-25', memo: '참석' },
-  { id: 'r7', type: '경사', item: '결혼', direction: '받음', name: '금나현', relation: '직장', amount: 200000, date: '2024-05-25', memo: '참석' },
-  { id: 'r8', type: '경사', item: '결혼', direction: '받음', name: '장병헌', relation: '직장', amount: 150000, date: '2024-05-25', memo: '참석' },
-  { id: 'r9', type: '경사', item: '결혼', direction: '받음', name: '이인성 수석님', relation: '직장', amount: 150000, date: '2024-05-25', memo: '참석' },
-  { id: 'r10', type: '경사', item: '결혼', direction: '받음', name: '박수빈', relation: '직장', amount: 150000, date: '2024-05-25', memo: '참석' },
-  { id: 'r11', type: '경사', item: '결혼', direction: '받음', name: '김하엘', relation: '직장', amount: 150000, date: '2024-05-25', memo: '참석' },
-  { id: 'r12', type: '경사', item: '결혼', direction: '받음', name: '김영진', relation: '직장', amount: 150000, date: '2024-05-25', memo: '참석' },
-  { id: 'r13', type: '경사', item: '결혼', direction: '받음', name: '황재준', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r14', type: '경사', item: '결혼', direction: '받음', name: '한신', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r15', type: '경사', item: '결혼', direction: '받음', name: '하현지', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r16', type: '경사', item: '결혼', direction: '받음', name: '추지수', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r17', type: '경사', item: '결혼', direction: '받음', name: '최정윤', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r18', type: '경사', item: '결혼', direction: '보냄', name: '최정윤', relation: '직장', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r19', type: '경사', item: '결혼', direction: '받음', name: '최애령', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r20', type: '경사', item: '결혼', direction: '받음', name: '최소희 책임님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r21', type: '경사', item: '결혼', direction: '받음', name: '최석원 수석님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r22', type: '경사', item: '결혼', direction: '받음', name: '최민규', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r23', type: '경사', item: '결혼', direction: '보냄', name: '최민규', relation: '직장', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r24', type: '경사', item: '결혼', direction: '받음', name: '채윤정', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r25', type: '경사', item: '결혼', direction: '받음', name: '정인수', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r26', type: '경사', item: '결혼', direction: '받음', name: '정대권 팀장님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r27', type: '경사', item: '결혼', direction: '받음', name: '정경인', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r28', type: '경사', item: '결혼', direction: '받음', name: '장필규 상무님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r29', type: '경사', item: '결혼', direction: '받음', name: '임준영 책임님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r30', type: '경사', item: '결혼', direction: '받음', name: '임연하 수석님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r31', type: '경사', item: '결혼', direction: '받음', name: '이지혜 책임님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r32', type: '경사', item: '결혼', direction: '받음', name: '이지현', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r33', type: '경사', item: '결혼', direction: '받음', name: '이정민', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r34', type: '경사', item: '결혼', direction: '보냄', name: '이정민', relation: '직장', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r35', type: '경사', item: '결혼', direction: '받음', name: '이영주 책임님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r36', type: '경사', item: '결혼', direction: '받음', name: '위혜리', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r37', type: '경사', item: '결혼', direction: '받음', name: '오창표', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r38', type: '경사', item: '결혼', direction: '받음', name: '신원희', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r39', type: '경사', item: '결혼', direction: '받음', name: '신상헌 책임님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r40', type: '경사', item: '결혼', direction: '받음', name: '성시우', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r41', type: '경사', item: '결혼', direction: '받음', name: '배진솔', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r42', type: '경사', item: '결혼', direction: '받음', name: '배병찬', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r43', type: '경사', item: '결혼', direction: '받음', name: '박하윤', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r44', type: '경사', item: '결혼', direction: '받음', name: '박진섭', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r45', type: '경사', item: '결혼', direction: '받음', name: '박지원', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r46', type: '경사', item: '결혼', direction: '받음', name: '박승화', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r47', type: '경사', item: '결혼', direction: '받음', name: '나경석', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r48', type: '경사', item: '결혼', direction: '받음', name: '김희원', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r49', type: '경사', item: '결혼', direction: '받음', name: '김희수', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r50', type: '경사', item: '결혼', direction: '보냄', name: '김희수', relation: '직장', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r51', type: '경사', item: '결혼', direction: '받음', name: '김효민 책임님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r52', type: '경사', item: '결혼', direction: '보냄', name: '김효민 책임님', relation: '직장', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r53', type: '경사', item: '결혼', direction: '받음', name: '김호찬 책임님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r54', type: '경사', item: '결혼', direction: '받음', name: '김한새', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r55', type: '경사', item: '결혼', direction: '받음', name: '김치영', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r56', type: '경사', item: '결혼', direction: '받음', name: '김창성', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r57', type: '경사', item: '결혼', direction: '보냄', name: '김창성', relation: '직장', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r58', type: '경사', item: '결혼', direction: '받음', name: '김성민', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r59', type: '경사', item: '결혼', direction: '받음', name: '김상홍 책임님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r60', type: '경사', item: '결혼', direction: '받음', name: '김민영(가든)', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r61', type: '경사', item: '결혼', direction: '받음', name: '강성주', relation: '직장', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r62', type: '경사', item: '결혼', direction: '받음', name: '최희석 수석님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r63', type: '경사', item: '결혼', direction: '받음', name: '최지윤', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r64', type: '경사', item: '결혼', direction: '받음', name: '최지원', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r65', type: '경사', item: '결혼', direction: '받음', name: '최재원 책임님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r66', type: '경사', item: '결혼', direction: '받음', name: '최예준', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r67', type: '경사', item: '결혼', direction: '받음', name: '최성곤 수석님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r68', type: '경사', item: '결혼', direction: '받음', name: '최민주 책임님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r69', type: '경사', item: '결혼', direction: '받음', name: '조소희', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r70', type: '경사', item: '결혼', direction: '받음', name: '정용운 팀장님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r71', type: '경사', item: '결혼', direction: '받음', name: '전수현', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r72', type: '경사', item: '결혼', direction: '받음', name: '임찬진', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r73', type: '경사', item: '결혼', direction: '받음', name: '이호승 수석님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r74', type: '경사', item: '결혼', direction: '받음', name: '이혜연 책임님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r75', type: '경사', item: '결혼', direction: '받음', name: '이윤정(판교)', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r76', type: '경사', item: '결혼', direction: '받음', name: '이규한 수석님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r77', type: '경사', item: '결혼', direction: '받음', name: '오태규 위원장', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r78', type: '경사', item: '결혼', direction: '받음', name: '안대혁', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r79', type: '경사', item: '결혼', direction: '받음', name: '손세욱 책임님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r80', type: '경사', item: '결혼', direction: '받음', name: '손민정', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r81', type: '경사', item: '결혼', direction: '받음', name: '박주영 책임님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r82', type: '경사', item: '결혼', direction: '받음', name: '박가리', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r83', type: '경사', item: '결혼', direction: '받음', name: '문필성', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r84', type: '경사', item: '결혼', direction: '받음', name: '김혜림', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r85', type: '경사', item: '결혼', direction: '보냄', name: '김혜림', relation: '직장', amount: 50000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r86', type: '경사', item: '결혼', direction: '받음', name: '김현아 책임님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r87', type: '경사', item: '결혼', direction: '보냄', name: '김현아 책임님', relation: '직장', amount: 50000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r88', type: '경사', item: '결혼', direction: '받음', name: '김진형', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r89', type: '경사', item: '결혼', direction: '받음', name: '김지현', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r90', type: '경사', item: '결혼', direction: '받음', name: '김정태 수석님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r91', type: '경사', item: '결혼', direction: '받음', name: '김임식 사무국장님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r92', type: '경사', item: '결혼', direction: '받음', name: '김일구', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r93', type: '경사', item: '결혼', direction: '받음', name: '김은혜 책임님', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r94', type: '경사', item: '결혼', direction: '보냄', name: '김은혜 책임님', relation: '직장', amount: 50000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r95', type: '경사', item: '결혼', direction: '받음', name: '김수희', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r96', type: '경사', item: '결혼', direction: '받음', name: '김수현(아울렛)', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r97', type: '경사', item: '결혼', direction: '보냄', name: '김수현(아울렛)', relation: '직장', amount: 50000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r98', type: '경사', item: '결혼', direction: '받음', name: '김상은', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r99', type: '경사', item: '결혼', direction: '받음', name: '김동준', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r100', type: '경사', item: '결혼', direction: '받음', name: '김나연', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r101', type: '경사', item: '결혼', direction: '받음', name: '김관호', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r102', type: '경사', item: '결혼', direction: '받음', name: '고은비', relation: '직장', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r103', type: '경사', item: '결혼', direction: '보냄', name: '고은비', relation: '직장', amount: 50000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r104', type: '경사', item: '결혼', direction: '받음', name: '김동현', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r105', type: '경사', item: '결혼', direction: '보냄', name: '김동현', relation: '직장', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r106', type: '경사', item: '결혼', direction: '받음', name: '손재호 책임님', relation: '직장', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r107', type: '경사', item: '결혼', direction: '받음', name: '권용재', relation: '친구', amount: 770000, date: '2024-05-25', memo: '참석' },
-  { id: 'r108', type: '경사', item: '결혼', direction: '받음', name: '노승우', relation: '친구', amount: 500000, date: '2024-05-25', memo: '참석' },
-  { id: 'r109', type: '경사', item: '결혼', direction: '받음', name: '이정준', relation: '친구', amount: 500000, date: '2024-05-25', memo: '참석' },
-  { id: 'r110', type: '경사', item: '결혼', direction: '받음', name: '김동현(친구)', relation: '친구', amount: 500000, date: '2024-05-25', memo: '참석' },
-  { id: 'r111', type: '경사', item: '결혼', direction: '받음', name: '최영균', relation: '친구', amount: 500000, date: '2024-05-25', memo: '참석' },
-  { id: 'r112', type: '경사', item: '결혼', direction: '받음', name: '김동현(사촌)', relation: '친구', amount: 300000, date: '2024-05-25', memo: '참석' },
-  { id: 'r113', type: '경사', item: '결혼', direction: '받음', name: '김경동', relation: '친구', amount: 300000, date: '2024-05-25', memo: '참석' },
-  { id: 'r114', type: '경사', item: '결혼', direction: '받음', name: '김태훈', relation: '친구', amount: 300000, date: '2024-05-25', memo: '참석' },
-  { id: 'r115', type: '경사', item: '결혼', direction: '보냄', name: '김태훈', relation: '친구', amount: 300000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r116', type: '경사', item: '결혼', direction: '받음', name: '김재엽', relation: '친구', amount: 300000, date: '2024-05-25', memo: '참석' },
-  { id: 'r117', type: '경사', item: '결혼', direction: '받음', name: '윤준식', relation: '친구', amount: 300000, date: '2024-05-25', memo: '참석' },
-  { id: 'r118', type: '경사', item: '결혼', direction: '보냄', name: '윤준식', relation: '친구', amount: 300000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r119', type: '경사', item: '결혼', direction: '받음', name: '변재웅', relation: '친구', amount: 300000, date: '2024-05-25', memo: '참석' },
-  { id: 'r120', type: '경사', item: '결혼', direction: '받음', name: '이주의', relation: '친구', amount: 300000, date: '2024-05-25', memo: '참석' },
-  { id: 'r121', type: '경사', item: '결혼', direction: '받음', name: '조운상', relation: '친구', amount: 200000, date: '2024-05-25', memo: '불참' },
-  { id: 'r122', type: '경사', item: '결혼', direction: '받음', name: '백승훈', relation: '친구', amount: 200000, date: '2024-05-25', memo: '참석' },
-  { id: 'r123', type: '경사', item: '결혼', direction: '받음', name: '황인서', relation: '친구', amount: 150000, date: '2024-05-25', memo: '불참' },
-  { id: 'r124', type: '경사', item: '결혼', direction: '보냄', name: '황인서', relation: '친구', amount: 150000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r125', type: '경사', item: '결혼', direction: '받음', name: '조계현', relation: '친구', amount: 150000, date: '2024-05-25', memo: '참석' },
-  { id: 'r126', type: '경사', item: '결혼', direction: '받음', name: '김성연', relation: '친구', amount: 150000, date: '2024-05-25', memo: '참석' },
-  { id: 'r127', type: '경사', item: '결혼', direction: '받음', name: '황현정', relation: '친구', amount: 150000, date: '2024-05-25', memo: '참석' },
-  { id: 'r128', type: '경사', item: '결혼', direction: '받음', name: '장관익', relation: '친구', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r129', type: '경사', item: '결혼', direction: '받음', name: '서재현', relation: '친구', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r130', type: '경사', item: '결혼', direction: '보냄', name: '서재현', relation: '친구', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r131', type: '경사', item: '결혼', direction: '받음', name: '전현재', relation: '친구', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r132', type: '경사', item: '결혼', direction: '받음', name: '박종인', relation: '친구', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r133', type: '경사', item: '결혼', direction: '받음', name: '이호준', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r134', type: '경사', item: '결혼', direction: '보냄', name: '이호준', relation: '친구', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r135', type: '경사', item: '결혼', direction: '받음', name: '윤영근', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r136', type: '경사', item: '결혼', direction: '받음', name: '나웅기', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r137', type: '경사', item: '결혼', direction: '받음', name: '이아름', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r138', type: '경사', item: '결혼', direction: '받음', name: '최용인', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r139', type: '경사', item: '결혼', direction: '받음', name: '장형호', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r140', type: '경사', item: '결혼', direction: '받음', name: '김근태', relation: '친구', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r141', type: '경사', item: '결혼', direction: '받음', name: '박진우', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r142', type: '경사', item: '결혼', direction: '받음', name: '장경준', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r143', type: '경사', item: '결혼', direction: '받음', name: '문승환', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r144', type: '경사', item: '결혼', direction: '받음', name: '이진이', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r145', type: '경사', item: '결혼', direction: '받음', name: '민철', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r146', type: '경사', item: '결혼', direction: '받음', name: '황석민', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r147', type: '경사', item: '결혼', direction: '받음', name: '김민혁', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r148', type: '경사', item: '결혼', direction: '받음', name: '박원기', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r149', type: '경사', item: '결혼', direction: '보냄', name: '박원기', relation: '친구', amount: 100000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r150', type: '경사', item: '결혼', direction: '받음', name: '한국현', relation: '친구', amount: 100000, date: '2024-05-25', memo: '참석' },
-  { id: 'r151', type: '경사', item: '결혼', direction: '받음', name: '민경창', relation: '친구', amount: 100000, date: '2024-05-25', memo: '불참' },
-  { id: 'r152', type: '경사', item: '결혼', direction: '받음', name: '이유진', relation: '친구', amount: 70000, date: '2024-05-25', memo: '불참' },
-  { id: 'r153', type: '경사', item: '결혼', direction: '받음', name: '한현종', relation: '친구', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r154', type: '경사', item: '결혼', direction: '보냄', name: '한현종', relation: '친구', amount: 50000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r155', type: '경사', item: '결혼', direction: '받음', name: '김민재(외대)', relation: '친구', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r156', type: '경사', item: '결혼', direction: '받음', name: '진우영(축구)', relation: '친구', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r157', type: '경사', item: '결혼', direction: '받음', name: '박하얀', relation: '친구', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r158', type: '경사', item: '결혼', direction: '보냄', name: '박하얀', relation: '친구', amount: 50000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r159', type: '경사', item: '결혼', direction: '받음', name: '박혜린', relation: '친구', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r160', type: '경사', item: '결혼', direction: '보냄', name: '박혜린', relation: '친구', amount: 50000, date: '', memo: '받은 만큼 답례' },
-  { id: 'r161', type: '경사', item: '결혼', direction: '받음', name: '김현석', relation: '친구', amount: 50000, date: '2024-05-25', memo: '불참' },
-  { id: 'r162', type: '경사', item: '결혼', direction: '받음', name: '변준규', relation: '친구', amount: 50000, date: '2024-05-25', memo: '참석' }
+  { id: 's1', type: '경사', item: '결혼', direction: '보냄', name: '김민준', relation: '직장', amount: 100000, date: '2026-03-14', memo: '청첩장 받고 참석', sample: true },
+  { id: 's2', type: '조사', item: '장례', direction: '보냄', name: '박서준 부친상', relation: '친구', amount: 100000, date: '2026-05-02', memo: '', sample: true },
+  { id: 's3', type: '경사', item: '출산·돌', direction: '보냄', name: '이하은', relation: '가족', amount: 50000, date: '2026-07-20', memo: '', sample: true },
+  { id: 's4', type: '경사', item: '결혼', direction: '받음', name: '정하늘', relation: '직장', amount: 200000, date: '2026-08-15', memo: '내 결혼식 축의금', sample: true },
+  { id: 's5', type: '경사', item: '개업', direction: '보냄', name: '최수아', relation: '친구', amount: 100000, date: '2026-09-01', memo: '', sample: true },
+  { id: 's6', type: '경사', item: '결혼', direction: '보냄', name: '김도윤', relation: '직장', amount: 100000, date: '2025-04-10', memo: '', sample: true },
+  { id: 's7', type: '조사', item: '장례', direction: '보냄', name: '오지우', relation: '가족', amount: 150000, date: '2025-11-02', memo: '', sample: true }
 ];
 
 let entries = [];
@@ -515,7 +364,7 @@ function load() {
       entries = parsed.entries;
       updatedAt = parsed.updatedAt || 0;
     } else {
-      // first-ever visit: seed with the imported record list
+      // first-ever visit: seed with example entries so the app isn't a blank shell
       entries = INITIAL_ENTRIES.map(e => ({ ...e }));
       updatedAt = Date.now();
       persistLocal();
@@ -550,6 +399,10 @@ function persistDeleteMany(ids) {
   entries = entries.filter(e => !ids.includes(e.id));
   save();
   render();
+}
+
+function clearSampleData() {
+  persistDeleteMany(entries.filter(e => e.sample).map(e => e.id));
 }
 
 function render() { renderCurrentTab(); }
@@ -638,6 +491,11 @@ function renderHome() {
       <div class="stile"><div class="l">받은 금액</div><div class="v">${won(receivedThisYear)}</div></div>
       <div class="stile"><div class="l">작년 대비</div><div class="v">${diffTxt}</div></div>
     </div>`;
+
+  const hasSample = entries.some(e => e.sample);
+  document.getElementById('sample-banner-wrap').innerHTML = hasSample
+    ? `<div class="sample-banner"><span>예시 데이터로 채워져 있어요. 내 기록을 시작하려면 지워주세요.</span><button onclick="clearSampleData()">예시 지우기</button></div>`
+    : '';
 
   const chips = [
     { k: 'all', l: '전체' }, { k: 'sent', l: '보냄' }, { k: 'received', l: '받음' }, { k: 'year', l: '올해' }

@@ -1059,10 +1059,13 @@ load();
         const app = window.__gyeongjoApp;
         if (!app) return;
         if (!snap.exists()) { pushToCloud(); return; }
+        // 로그인 = 클라우드가 항상 진실 공급원. 기기를 초기화한 뒤 다시
+        // 로그인해도 (로컬 타임스탬프가 더 최신이어도) 항상 클라우드
+        // 데이터를 불러오도록 한다 — updatedAt 비교로 막지 않는다.
         const remote = snap.data();
-        if (remote && typeof remote.updatedAt === 'number' && remote.updatedAt >= app.getUpdatedAt()) {
+        if (remote && typeof remote.payload === 'string') {
           applyingRemote = true;
-          try { app.setData(JSON.parse(remote.payload), remote.updatedAt); }
+          try { app.setData(JSON.parse(remote.payload), remote.updatedAt || Date.now()); }
           catch (e) { console.error('bad cloud payload', e); }
           applyingRemote = false;
         }

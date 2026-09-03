@@ -882,7 +882,11 @@ function renderSettings() {
 function cloudSignIn() { if (window.cloudSync) window.cloudSync.signIn(); }
 function cloudSignOut() { if (window.cloudSync) window.cloudSync.signOut(); }
 function resetAll() {
-  if (!confirm('모든 경조사비 기록을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+  const signedIn = !!(window.cloudSync && window.cloudSync.ready && window.cloudSync.user);
+  const msg = signedIn
+    ? `모든 경조사비 기록을 삭제하시겠습니까?\n\n현재 ${window.cloudSync.user.displayName || window.cloudSync.user.email} 계정과 동기화 중이라, 클라우드에 저장된 데이터도 함께 삭제됩니다.\n이 작업은 되돌릴 수 없습니다.`
+    : '모든 경조사비 기록을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.';
+  if (!confirm(msg)) return;
   persistDeleteMany(entries.map(e => e.id));
 }
 

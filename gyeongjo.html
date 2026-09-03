@@ -306,7 +306,7 @@ input,textarea{font-family:inherit}
   window.cloudSync = {
     ready: false, user: null, _cb: null,
     onAuthChange(cb) { this._cb = cb; if (this.ready) cb(this.user); },
-    signIn() {}, signOut() {}, push() {},
+    signIn() {}, signOut() {}, push() {}, pull() {},
   };
 </script>
 
@@ -876,11 +876,26 @@ function renderSettings() {
   document.getElementById('set-backend').innerHTML =
     `<span class="sync-dot" style="background:${synced ? 'var(--good)' : 'var(--muted)'}"></span>${escapeHtml(statusText)}`;
   document.getElementById('set-sync-actions').innerHTML = synced
-    ? `<button class="btn-outline" onclick="cloudSignOut()">로그아웃</button>`
+    ? `<div style="display:flex;flex-direction:column;gap:8px">
+         <button class="btn-outline" onclick="cloudPull()">클라우드에서 불러오기 (이 기기 내용을 덮어씀)</button>
+         <button class="btn-outline" onclick="cloudPush()">지금 상태를 클라우드에 저장 (클라우드를 덮어씀)</button>
+         <button class="btn-outline" onclick="cloudSignOut()">로그아웃</button>
+       </div>`
     : `<button class="btn-primary" onclick="cloudSignIn()">구글 계정으로 동기화하기</button>`;
 }
 function cloudSignIn() { if (window.cloudSync) window.cloudSync.signIn(); }
 function cloudSignOut() { if (window.cloudSync) window.cloudSync.signOut(); }
+function cloudPull() {
+  if (!window.cloudSync || !window.cloudSync.pull) return;
+  if (!confirm('클라우드에 저장된 데이터를 불러올까요?\n지금 이 기기에 있는 내용은 덮어써집니다.')) return;
+  window.cloudSync.pull();
+}
+function cloudPush() {
+  if (!window.cloudSync || !window.cloudSync.push) return;
+  if (!confirm('지금 이 기기의 데이터를 클라우드에 저장할까요?\n클라우드에 있던 내용은 덮어써집니다.')) return;
+  window.cloudSync.push();
+  toast('클라우드에 저장했어요');
+}
 function resetAll() {
   const signedIn = !!(window.cloudSync && window.cloudSync.ready && window.cloudSync.user);
   const msg = signedIn
@@ -1023,7 +1038,7 @@ load();
     const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
     const { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } =
       await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js");
-    const { getFirestore, doc, setDoc, onSnapshot } =
+    const { getFirestore, doc, setDoc, getDoc, onSnapshot } =
       await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");
 
     const firebaseConfig = {
@@ -1040,46 +1055,57 @@ load();
     const db = getFirestore(fbApp);
     const provider = new GoogleAuthProvider();
 
-    let unsubscribeSnapshot = null;
-    let applyingRemote = false;
+    // 로그인은 "연결"만 의미하고, 어느 방향으로 덮어쓸지는 사용자가
+    // 설정 탭의 두 버튼(불러오기/저장하기)으로 직접 선택한다. 자동으로
+    // 어느 한쪽을 덮어쓰지 않는다 — 자동 규칙은 "기기 초기화 후
+    // 재로그인해서 복구"와 "새 데이터를 계정에 올리기"라는 서로 반대
+    // 방향의 요구를 동시에 만족시킬 수 없기 때문이다.
     const docRefFor = (uid) => doc(db, 'users', uid, 'gyeongjo', 'data');
 
     async function pushToCloud() {
       const user = auth.currentUser;
       const app = window.__gyeongjoApp;
-      if (!user || !app || applyingRemote) return;
+      if (!user || !app) return;
       try {
         await setDoc(docRefFor(user.uid), { payload: JSON.stringify(app.getData()), updatedAt: app.getUpdatedAt() });
-      } catch (e) { console.error('cloud push failed', e); }
+      } catch (e) {
+        console.error('cloud push failed', e);
+        if (app) app.toast('클라우드 저장 실패: ' + (e.code || e.message || '알 수 없는 오류'));
+      }
     }
 
-    function attachListener(uid) {
-      if (unsubscribeSnapshot) unsubscribeSnapshot();
-      unsubscribeSnapshot = onSnapshot(docRefFor(uid), (snap) => {
-        const app = window.__gyeongjoApp;
-        if (!app) return;
-        if (!snap.exists()) { pushToCloud(); return; }
-        // 로그인 = 클라우드가 항상 진실 공급원. 기기를 초기화한 뒤 다시
-        // 로그인해도 (로컬 타임스탬프가 더 최신이어도) 항상 클라우드
-        // 데이터를 불러오도록 한다 — updatedAt 비교로 막지 않는다.
+    async function pullFromCloud() {
+      const user = auth.currentUser;
+      const app = window.__gyeongjoApp;
+      if (!user || !app) return;
+      try {
+        const snap = await getDoc(docRefFor(user.uid));
+        if (!snap.exists()) { app.toast('클라우드에 저장된 데이터가 없어요'); return; }
         const remote = snap.data();
         if (remote && typeof remote.payload === 'string') {
-          applyingRemote = true;
-          try { app.setData(JSON.parse(remote.payload), remote.updatedAt || Date.now()); }
-          catch (e) { console.error('bad cloud payload', e); }
-          applyingRemote = false;
+          app.setData(JSON.parse(remote.payload), remote.updatedAt || Date.now());
+          app.toast('클라우드에서 불러왔어요');
         }
-      }, (err) => {
-        console.error('cloud listen failed', err);
-        if (window.__gyeongjoApp) window.__gyeongjoApp.toast('동기화 오류: ' + (err.code || err.message || '알 수 없는 오류'));
-      });
+      } catch (e) {
+        console.error('cloud pull failed', e);
+        app.toast('불러오기 실패: ' + (e.code || e.message || '알 수 없는 오류'));
+      }
+    }
+
+    // 계정에 클라우드 문서가 아예 없을 때만(첫 연동) 자동으로 지금 로컬
+    // 상태를 올려 초기화한다 — 이건 어느 쪽도 덮어쓰는 게 아니라 그냥
+    // 최초 생성이라 안전하다.
+    async function ensureCloudDocExists(uid) {
+      try {
+        const snap = await getDoc(docRefFor(uid));
+        if (!snap.exists()) await pushToCloud();
+      } catch (e) { console.error('cloud init check failed', e); }
     }
 
     onAuthStateChanged(auth, (user) => {
       window.cloudSync.ready = true;
       window.cloudSync.user = user;
-      if (user) { attachListener(user.uid); }
-      else if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+      if (user) { ensureCloudDocExists(user.uid); }
       if (window.cloudSync._cb) window.cloudSync._cb(user);
     });
 
@@ -1102,6 +1128,7 @@ load();
       }
     };
     window.cloudSync.push = pushToCloud;
+    window.cloudSync.pull = pullFromCloud;
   } catch (e) {
     console.error('cloud sync unavailable:', e);
   }

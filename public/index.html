@@ -204,6 +204,7 @@ input,textarea{font-family:inherit}
       <div class="search-box"><span>⌕</span><input id="people-search" placeholder="이름 또는 관계로 검색" oninput="renderPeople()"></div>
     </div>
     <div class="chips" id="people-chips"></div>
+    <div class="chips" id="people-dir-chips" style="margin-top:0"></div>
     <div class="people-list" id="people-list" style="margin-top:6px"></div>
   </div>
 
@@ -342,6 +343,7 @@ let ui = {
   homeFilter: 'all',      // all | sent | received | year
   homeSearchOpen: false,
   peopleRel: 'all',
+  peopleDir: 'all',       // all | received | sent | both
   statsScope: 'year',     // 'year' | 'all'
   formType: '경사',
   formItem: '결혼',
@@ -565,6 +567,7 @@ function rowHtml(e) {
 // PEOPLE
 // ================================================================
 function setPeopleRel(r) { ui.peopleRel = r; renderPeople(); }
+function setPeopleDir(d) { ui.peopleDir = d; renderPeople(); }
 
 function aggregatePeople() {
   const map = {};
@@ -575,7 +578,11 @@ function aggregatePeople() {
     if (e.direction === '보냄') p.sent += e.amount; else p.received += e.amount;
     p.relation = e.relation || p.relation;
   });
-  return Object.values(map);
+  const people = Object.values(map);
+  people.forEach(p => {
+    p.dir = (p.sent > 0 && p.received > 0) ? 'both' : (p.sent > 0 ? 'sent' : 'received');
+  });
+  return people;
 }
 
 function renderPeople() {
@@ -589,9 +596,22 @@ function renderPeople() {
     `<button class="chip${ui.peopleRel === c.k ? ' active' : ''}" onclick="setPeopleRel('${c.k}')">${c.l}</button>`
   ).join('');
 
+  const dirCounts = { received: 0, sent: 0, both: 0 };
+  people.forEach(p => { dirCounts[p.dir]++; });
+  const dirChips = [
+    { k: 'all', l: '전체' },
+    { k: 'received', l: `받음 ${dirCounts.received}` },
+    { k: 'sent', l: `보냄 ${dirCounts.sent}` },
+    { k: 'both', l: `주고받음 ${dirCounts.both}` },
+  ];
+  document.getElementById('people-dir-chips').innerHTML = dirChips.map(c =>
+    `<button class="chip${ui.peopleDir === c.k ? ' active' : ''}" onclick="setPeopleDir('${c.k}')">${c.l}</button>`
+  ).join('');
+
   const q = (document.getElementById('people-search').value || '').trim().toLowerCase();
   let list = people;
   if (ui.peopleRel !== 'all') list = list.filter(p => p.relation === ui.peopleRel);
+  if (ui.peopleDir !== 'all') list = list.filter(p => p.dir === ui.peopleDir);
   if (q) list = list.filter(p => (p.name + ' ' + (p.relation || '')).toLowerCase().includes(q));
   list.sort((a, b) => Math.abs(b.sent - b.received) - Math.abs(a.sent - a.received));
 

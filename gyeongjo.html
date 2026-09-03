@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>경조금 관리 리스트</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, 'Malgun Gothic', sans-serif; max-width: 480px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 20px; margin-bottom: 16px; }
+  h2 { font-size: 16px; margin: 24px 0 8px; }
+
+  /* 입력 폼 */
+  .form { border: 1px solid #ccc; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .form label { font-size: 12px; color: #555; display: block; margin-bottom: 2px; }
+  .form select, .form input { width: 100%; padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; }
+  .row { display: flex; gap: 8px; }
+  .row > div { flex: 1; }
+  .form button { margin-top: 4px; padding: 10px; font-size: 14px; font-weight: 700; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
+
+  /* 목록 */
+  table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 13px; }
+  th, td { border-bottom: 1px solid #e0e0e0; padding: 8px 6px; text-align: center; }
+  th { background: #f5f5f5; }
+  .dir-보냄 { color: #c0392b; }
+  .dir-받음 { color: #2874a6; }
+  .del-btn { border: none; background: none; color: #999; cursor: pointer; font-size: 14px; }
+  .empty-row td { color: #999; padding: 16px; }
+  .summary { font-size: 13px; color: #555; margin-top: 6px; }
+  .summary b { color: #111; }
+</style>
+</head>
+<body>
+
+<h1>경조금 관리 리스트</h1>
+
+<div class="form">
+  <div class="row">
+    <div>
+      <label>구분</label>
+      <select id="in-type" onchange="onTypeChange()">
+        <option value="경사">경사</option>
+        <option value="조사">조사</option>
+      </select>
+    </div>
+    <div>
+      <label>보냄 / 받음</label>
+      <select id="in-dir">
+        <option value="보냄">보냄</option>
+        <option value="받음">받음</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <label>경조사 항목</label>
+    <select id="in-event-select" onchange="onEventSelectChange()"></select>
+  </div>
+  <div id="in-event-custom-wrap" style="display:none">
+    <label>항목 직접입력</label>
+    <input type="text" id="in-event-custom" placeholder="예: 승진 축하">
+  </div>
+
+  <div class="row">
+    <div>
+      <label>이름</label>
+      <input type="text" id="in-name" placeholder="이름 입력">
+    </div>
+    <div>
+      <label>금액 (원)</label>
+      <input type="text" inputmode="numeric" id="in-amount" placeholder="예: 100,000" oninput="formatAmountInput(this)">
+    </div>
+  </div>
+
+  <button onclick="addEntry()">+ 추가</button>
+</div>
+
+<h2>경사</h2>
+<table>
+  <thead><tr><th>항목</th><th>구분</th><th>이름</th><th>금액</th><th></th></tr></thead>
+  <tbody id="list-경사"></tbody>
+</table>
+<div class="summary" id="summary-경사"></div>
+
+<h2>조사</h2>
+<table>
+  <thead><tr><th>항목</th><th>구분</th><th>이름</th><th>금액</th><th></th></tr></thead>
+  <tbody id="list-조사"></tbody>
+</table>
+<div class="summary" id="summary-조사"></div>
+
+<script>
+const EVENTS = {
+  '경사': ['결혼', '돌잔치', '직접입력'],
+  '조사': ['장례', '직접입력']
+};
+
+const STORAGE_KEY = 'gyeongjo-entries';
+let entries = [];
+
+function load() {
+  try {
+    entries = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch (e) {
+    entries = [];
+  }
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function onTypeChange() {
+  const type = document.getElementById('in-type').value;
+  const sel = document.getElementById('in-event-select');
+  sel.innerHTML = EVENTS[type].map(ev => `<option value="${ev}">${ev}</option>`).join('');
+  onEventSelectChange();
+}
+
+function onEventSelectChange() {
+  const isCustom = document.getElementById('in-event-select').value === '직접입력';
+  document.getElementById('in-event-custom-wrap').style.display = isCustom ? 'block' : 'none';
+}
+
+function formatAmountInput(el) {
+  const digits = el.value.replace(/[^0-9]/g, '');
+  el.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
+}
+
+function addEntry() {
+  const type = document.getElementById('in-type').value;
+  const dir = document.getElementById('in-dir').value;
+  const eventSel = document.getElementById('in-event-select').value;
+  const event = eventSel === '직접입력'
+    ? document.getElementById('in-event-custom').value.trim()
+    : eventSel;
+  const name = document.getElementById('in-name').value.trim();
+  const amount = Number(document.getElementById('in-amount').value.replace(/[^0-9]/g, ''));
+
+  if (!event) { alert('경조사 항목을 입력해 주세요.'); return; }
+  if (!name) { alert('이름을 입력해 주세요.'); return; }
+  if (!amount) { alert('금액을 입력해 주세요.'); return; }
+
+  entries.push({ id: Date.now(), type, dir, event, name, amount });
+  save();
+  render();
+
+  document.getElementById('in-name').value = '';
+  document.getElementById('in-amount').value = '';
+}
+
+function deleteEntry(id) {
+  entries = entries.filter(e => e.id !== id);
+  save();
+  render();
+}
+
+function render() {
+  ['경사', '조사'].forEach(type => {
+    const tbody = document.getElementById('list-' + type);
+    const rows = entries.filter(e => e.type === type);
+    if (!rows.length) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="5">등록된 내역이 없습니다.</td></tr>`;
+    } else {
+      tbody.innerHTML = rows.map(e => `
+        <tr>
+          <td>${e.event}</td>
+          <td class="dir-${e.dir}">${e.dir}</td>
+          <td>${e.name}</td>
+          <td>${e.amount.toLocaleString('ko-KR')}원</td>
+          <td><button class="del-btn" onclick="deleteEntry(${e.id})">✕</button></td>
+        </tr>
+      `).join('');
+    }
+    const sent = rows.filter(e => e.dir === '보냄').reduce((s, e) => s + e.amount, 0);
+    const received = rows.filter(e => e.dir === '받음').reduce((s, e) => s + e.amount, 0);
+    document.getElementById('summary-' + type).innerHTML =
+      `보낸 금액 합계: <b>${sent.toLocaleString('ko-KR')}원</b> &nbsp;|&nbsp; 받은 금액 합계: <b>${received.toLocaleString('ko-KR')}원</b>`;
+  });
+}
+
+load();
+onTypeChange();
+render();
+</script>
+</body>
+</html>

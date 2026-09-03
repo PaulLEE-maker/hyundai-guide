@@ -2,186 +2,740 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>경조금 관리 리스트</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>경조사비</title>
 <style>
-  * { box-sizing: border-box; }
-  body { font-family: -apple-system, 'Malgun Gothic', sans-serif; max-width: 480px; margin: 0 auto; padding: 16px; }
-  h1 { font-size: 20px; margin-bottom: 16px; }
-  h2 { font-size: 16px; margin: 24px 0 8px; }
+:root{
+  --ink:#101418;--navy:#2f4a7a;--red:#c0442f;
+  --bg:#f5f6f8;--card:#fff;
+  --navy-tint:#dfe4ec;--navy-tint2:rgba(47,74,122,.10);
+  --red-tint:#f2dfdb;--red-tint2:rgba(192,68,47,.10);
+  --muted:rgba(16,20,24,.5);--muted2:rgba(16,20,24,.42);--muted3:rgba(16,20,24,.6);
+  --bdr:rgba(16,20,24,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'IBM Plex Sans KR',-apple-system,'Malgun Gothic',sans-serif;background:#e7eaf0;color:var(--ink)}
+.mono{font-family:'IBM Plex Mono',monospace}
+button{font-family:inherit;cursor:pointer}
+input,textarea{font-family:inherit}
 
-  /* 입력 폼 */
-  .form { border: 1px solid #ccc; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-  .form label { font-size: 12px; color: #555; display: block; margin-bottom: 2px; }
-  .form select, .form input { width: 100%; padding: 8px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; }
-  .row { display: flex; gap: 8px; }
-  .row > div { flex: 1; }
-  .form button { margin-top: 4px; padding: 10px; font-size: 14px; font-weight: 700; border: none; border-radius: 6px; background: #333; color: #fff; cursor: pointer; }
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;display:flex;flex-direction:column}
+.screen{display:none;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:100px}
+.screen.active{display:block}
 
-  /* 목록 */
-  table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 13px; }
-  th, td { border-bottom: 1px solid #e0e0e0; padding: 8px 6px; text-align: center; }
-  th { background: #f5f5f5; }
-  .dir-보냄 { color: #c0392b; }
-  .dir-받음 { color: #2874a6; }
-  .del-btn { border: none; background: none; color: #999; cursor: pointer; font-size: 14px; }
-  .empty-row td { color: #999; padding: 16px; }
-  .summary { font-size: 13px; color: #555; margin-top: 6px; }
-  .summary b { color: #111; }
+/* ---- header / summary (home) ---- */
+.hd{display:flex;justify-content:space-between;align-items:center;padding:20px 18px 12px}
+.hd-title{font:600 19px 'IBM Plex Sans KR',sans-serif;color:var(--ink)}
+.hd-icons{display:flex;gap:8px}
+.icon-btn{width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(16,20,24,.10);border:none;display:flex;align-items:center;justify-content:center;color:var(--muted3);font-size:14px}
+.search-wrap{padding:0 18px 10px}
+.search-box{display:flex;align-items:center;gap:8px;background:#fff;border-radius:14px;padding:10px 14px;box-shadow:0 1px 3px rgba(16,20,24,.08)}
+.search-box input{border:none;outline:none;flex:1;font-size:13px;background:transparent;color:var(--ink)}
+.search-box span{color:rgba(16,20,24,.35);font-size:14px}
+
+.summary{margin:0 18px;background:var(--navy);border-radius:22px;padding:22px 22px 20px;color:#fff;box-shadow:0 8px 22px rgba(47,74,122,.28)}
+.summary-top{display:flex;justify-content:space-between;align-items:center}
+.summary-lbl{font:500 11px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:rgba(255,255,255,.62)}
+.summary-badge{padding:4px 9px;border-radius:14px;background:rgba(255,255,255,.16);font:500 11px 'IBM Plex Sans KR',sans-serif}
+.summary-amt{display:flex;align-items:baseline;gap:5px;margin-top:12px}
+.summary-amt .n{font:600 34px/1 'IBM Plex Mono',monospace;letter-spacing:-.01em}
+.summary-amt .u{font:400 14px 'IBM Plex Sans KR',sans-serif;color:rgba(255,255,255,.7)}
+.summary-tiles{display:flex;gap:10px;margin-top:16px}
+.stile{flex:1;background:rgba(255,255,255,.12);border-radius:13px;padding:11px 13px}
+.stile .l{font:400 10.5px 'IBM Plex Sans KR',sans-serif;color:rgba(255,255,255,.65)}
+.stile .v{font:600 15px 'IBM Plex Mono',monospace;margin-top:3px}
+
+.chips{display:flex;gap:7px;margin:16px 18px 6px;flex-wrap:wrap}
+.chip{padding:7px 13px;border-radius:18px;background:#fff;color:var(--muted3);font:400 12px 'IBM Plex Sans KR',sans-serif;box-shadow:0 1px 2px rgba(16,20,24,.07);border:none}
+.chip.active{background:var(--ink);color:#fff;box-shadow:none}
+
+/* ---- list ---- */
+.list-wrap{padding:6px 18px 0}
+.month-hdr{display:flex;justify-content:space-between;padding:14px 4px 8px;font:500 11px 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--muted2)}
+.month-card{background:#fff;border-radius:18px;box-shadow:0 1px 3px rgba(16,20,24,.08);overflow:hidden;margin-bottom:4px}
+.row{display:grid;grid-template-columns:38px 1fr auto;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid rgba(16,20,24,.06);cursor:pointer}
+.row:last-child{border-bottom:none}
+.badge{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Sans KR',sans-serif;flex-shrink:0}
+.r-name{font:500 14.5px/1.3 'IBM Plex Sans KR',sans-serif;color:var(--ink)}
+.r-sub{font:400 11.5px/1.4 'IBM Plex Sans KR',sans-serif;color:var(--muted2);margin-top:2px}
+.r-amt{font:600 15px 'IBM Plex Mono',monospace;white-space:nowrap}
+.empty{text-align:center;padding:60px 24px;color:var(--muted)}
+.empty span{font-size:38px;display:block;margin-bottom:10px}
+.empty p{font-size:13px;line-height:1.6}
+
+/* ---- people tab ---- */
+.people-list{padding:0 18px;display:flex;flex-direction:column;gap:11px}
+.p-card{background:#fff;border-radius:20px;padding:16px 17px;box-shadow:0 1px 3px rgba(16,20,24,.08)}
+.p-top{display:flex;align-items:center;gap:12px}
+.p-avatar{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font:600 15px 'IBM Plex Sans KR',sans-serif;flex-shrink:0}
+.p-info{flex:1;min-width:0}
+.p-name{font:500 15px/1.3 'IBM Plex Sans KR',sans-serif;color:var(--ink)}
+.p-meta{font:400 11.5px 'IBM Plex Sans KR',sans-serif;color:var(--muted2);margin-top:2px}
+.p-right{text-align:right}
+.p-net{font:600 14px 'IBM Plex Mono',monospace}
+.p-tag{padding:3px 8px;border-radius:12px;font:500 10px 'IBM Plex Sans KR',sans-serif;margin-top:4px;display:inline-block}
+.p-bar{display:flex;height:7px;border-radius:4px;overflow:hidden;margin-top:14px;background:#eef0f4}
+.p-legend{display:flex;justify-content:space-between;font:500 10.5px 'IBM Plex Mono',monospace;color:var(--muted2);margin-top:7px}
+
+/* ---- stats tab ---- */
+.stats-wrap{padding:0 18px}
+.stat-card{background:#fff;border-radius:22px;padding:20px;box-shadow:0 1px 3px rgba(16,20,24,.08);margin-top:12px}
+.stat-card:first-child{margin-top:0}
+.stat-lbl{font:500 11px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--muted2)}
+.stat-big{display:flex;align-items:baseline;gap:5px;margin-top:8px}
+.stat-big .n{font:600 32px/1 'IBM Plex Mono',monospace;color:var(--ink)}
+.stat-big .u{font:400 14px 'IBM Plex Sans KR',sans-serif;color:var(--muted)}
+.stat-tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.stat-tag{padding:4px 9px;border-radius:12px;font:500 11px 'IBM Plex Mono',monospace}
+.bars{display:flex;align-items:flex-end;gap:6px;height:96px;margin-top:22px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bar{width:100%;border-radius:5px 5px 2px 2px;background:var(--navy-tint)}
+.bar-lbl{font:400 9.5px 'IBM Plex Mono',monospace;color:var(--muted2)}
+.stacked{display:flex;height:10px;border-radius:5px;overflow:hidden;margin-top:14px}
+.type-list{display:flex;flex-direction:column;gap:9px;margin-top:15px}
+.type-row{display:flex;align-items:center;gap:9px}
+.type-dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.type-row .name{flex:1;font:400 13px 'IBM Plex Sans KR',sans-serif;color:var(--ink)}
+.type-row .amt{font:500 13px 'IBM Plex Mono',monospace;color:var(--ink)}
+.rel-card{background:var(--navy-tint);border-radius:22px;padding:18px;margin-top:12px}
+.rel-tiles{display:flex;gap:10px;margin-top:13px;flex-wrap:wrap}
+.rel-tile{flex:1;min-width:70px}
+.rel-tile .v{font:600 17px 'IBM Plex Mono',monospace;color:var(--ink)}
+.rel-tile .l{font:400 11px 'IBM Plex Sans KR',sans-serif;color:var(--muted3);margin-top:2px}
+
+/* ---- settings tab ---- */
+.settings-wrap{padding:18px}
+.set-card{background:#fff;border-radius:18px;padding:16px 18px;box-shadow:0 1px 3px rgba(16,20,24,.08);margin-bottom:12px}
+.set-card .l{font:400 12px 'IBM Plex Sans KR',sans-serif;color:var(--muted3)}
+.set-card .v{font:600 20px 'IBM Plex Mono',monospace;color:var(--ink);margin-top:4px}
+.btn-danger{width:100%;padding:14px;border:none;border-radius:14px;background:var(--red-tint);color:var(--red);font:600 14px 'IBM Plex Sans KR',sans-serif}
+
+/* ---- bottom nav ---- */
+.bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-around;padding:10px 0 calc(10px + env(safe-area-inset-bottom));z-index:60}
+.nav-btn{background:none;border:none;font:400 11.5px 'IBM Plex Sans KR',sans-serif;color:rgba(16,20,24,.4);display:flex;flex-direction:column;align-items:center;gap:3px}
+.nav-btn.active{font-weight:600;color:var(--navy)}
+.nav-fab{width:48px;height:48px;border-radius:50%;background:var(--red);color:#fff;border:none;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:300;margin-top:-24px;box-shadow:0 6px 16px rgba(192,68,47,.34)}
+
+/* ---- add/edit modal ---- */
+.modal{display:none;position:fixed;inset:0;z-index:200;background:rgba(16,20,24,.4);align-items:flex-end;justify-content:center}
+.modal.open{display:flex}
+.sheet{background:#fff;width:100%;max-width:430px;border-radius:24px 24px 0 0;max-height:92vh;display:flex;flex-direction:column;animation:up .18s ease}
+@keyframes up{from{transform:translateY(24px);opacity:.6}to{transform:translateY(0);opacity:1}}
+.sheet-hd{display:flex;justify-content:space-between;align-items:center;padding:16px 20px}
+.sheet-hd .cancel{font:400 13px 'IBM Plex Sans KR',sans-serif;color:var(--muted)}
+.sheet-hd .title{font:600 15px 'IBM Plex Sans KR',sans-serif;color:var(--ink)}
+.sheet-hd .save{font:600 13px 'IBM Plex Sans KR',sans-serif;color:var(--navy)}
+.sheet-body{overflow-y:auto;padding:4px 20px 24px;display:flex;flex-direction:column;gap:18px}
+.field-lbl{font:500 11px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:var(--muted2);margin-bottom:9px}
+.toggle2{display:flex;gap:8px}
+.toggle2 .opt{flex:1;text-align:center;padding:12px 0;border-radius:14px;background:var(--bg);color:var(--muted3);font:400 13.5px 'IBM Plex Sans KR',sans-serif;border:none}
+.toggle2 .opt.active.type-경사{background:var(--red);color:#fff;box-shadow:0 4px 12px rgba(192,68,47,.26)}
+.toggle2 .opt.active.type-조사{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(47,74,122,.26)}
+.toggle2 .opt.active.dir{background:var(--ink);color:#fff}
+.item-chips{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.item-chip{padding:7px 13px;border-radius:18px;background:var(--bg);color:var(--muted3);font:400 12px 'IBM Plex Sans KR',sans-serif;border:none}
+.item-chip.active{background:var(--ink);color:#fff}
+.finp{width:100%;border:1.5px solid var(--bdr);border-radius:14px;padding:12px 14px;font-size:14px;outline:none;color:var(--ink);background:var(--bg)}
+.finp:focus{border-color:var(--navy)}
+.frow2{display:flex;gap:10px}
+.frow2 > div{flex:1}
+.amt-box{background:var(--bg);border-radius:20px;padding:18px}
+.amt-input{width:100%;border:none;background:transparent;outline:none;font:600 34px 'IBM Plex Mono',monospace;color:var(--ink);padding-bottom:12px;border-bottom:2px solid var(--ink)}
+.amt-chips{display:flex;gap:7px;margin-top:13px}
+.amt-chip{flex:1;text-align:center;padding:10px 0;border-radius:12px;background:#fff;font:500 12.5px 'IBM Plex Mono',monospace;color:var(--muted3);border:none}
+.amt-chip.active.type-경사{background:var(--red);color:#fff;font-weight:600}
+.amt-chip.active.type-조사{background:var(--navy);color:#fff;font-weight:600}
+.ftextarea{width:100%;border:1.5px solid var(--bdr);border-radius:14px;padding:13px 14px;font-size:13px;outline:none;resize:vertical;min-height:52px;background:var(--bg);color:var(--ink)}
+.sheet-foot{padding:6px 20px calc(20px + env(safe-area-inset-bottom))}
+.btn-save{width:100%;padding:16px;border:none;border-radius:16px;background:var(--ink);color:#fff;font:600 15px 'IBM Plex Sans KR',sans-serif}
+.btn-del{width:100%;padding:12px;border:none;background:none;color:var(--red);font:500 13px 'IBM Plex Sans KR',sans-serif;margin-top:4px}
 </style>
 </head>
 <body>
 
-<h1>경조금 관리 리스트</h1>
+<div class="app">
 
-<div class="form">
-  <div class="row">
-    <div>
-      <label>구분</label>
-      <select id="in-type" onchange="onTypeChange()">
-        <option value="경사">경사</option>
-        <option value="조사">조사</option>
-      </select>
+  <!-- ===== HOME ===== -->
+  <div class="screen active" id="screen-home">
+    <div class="hd">
+      <div class="hd-title">경조사비</div>
+      <div class="hd-icons">
+        <button class="icon-btn" onclick="toggleHomeSearch()">⌕</button>
+      </div>
     </div>
-    <div>
-      <label>보냄 / 받음</label>
-      <select id="in-dir">
-        <option value="보냄">보냄</option>
-        <option value="받음">받음</option>
-      </select>
+    <div class="search-wrap" id="home-search-wrap" style="display:none">
+      <div class="search-box"><span>⌕</span><input id="home-search" placeholder="이름 또는 항목 검색" oninput="renderHome()"></div>
+    </div>
+
+    <div class="summary" id="home-summary"></div>
+    <div class="chips" id="home-chips"></div>
+    <div class="list-wrap" id="home-list"></div>
+  </div>
+
+  <!-- ===== PEOPLE ===== -->
+  <div class="screen" id="screen-people">
+    <div class="hd">
+      <div class="hd-title" id="people-title">사람</div>
+    </div>
+    <div class="search-wrap">
+      <div class="search-box"><span>⌕</span><input id="people-search" placeholder="이름 또는 관계로 검색" oninput="renderPeople()"></div>
+    </div>
+    <div class="chips" id="people-chips"></div>
+    <div class="people-list" id="people-list" style="margin-top:6px"></div>
+  </div>
+
+  <!-- ===== STATS ===== -->
+  <div class="screen" id="screen-stats">
+    <div class="hd">
+      <div class="hd-title">통계</div>
+      <div class="chips" id="stats-scope-chips" style="margin:0"></div>
+    </div>
+    <div class="stats-wrap" id="stats-body"></div>
+  </div>
+
+  <!-- ===== SETTINGS ===== -->
+  <div class="screen" id="screen-settings">
+    <div class="hd"><div class="hd-title">설정</div></div>
+    <div class="settings-wrap">
+      <div class="set-card"><div class="l">전체 기록</div><div class="v" id="set-count">0건</div></div>
+      <div class="set-card"><div class="l">등록된 사람</div><div class="v" id="set-people">0명</div></div>
+      <button class="btn-danger" onclick="resetAll()">전체 데이터 초기화</button>
     </div>
   </div>
 
-  <div>
-    <label>경조사 항목</label>
-    <select id="in-event-select" onchange="onEventSelectChange()"></select>
-  </div>
-  <div id="in-event-custom-wrap" style="display:none">
-    <label>항목 직접입력</label>
-    <input type="text" id="in-event-custom" placeholder="예: 승진 축하">
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav class="bottomnav">
+    <button class="nav-btn" data-tab="home" onclick="switchTab('home')"><span>홈</span></button>
+    <button class="nav-btn" data-tab="people" onclick="switchTab('people')"><span>사람</span></button>
+    <button class="nav-fab" onclick="openAddModal()">+</button>
+    <button class="nav-btn" data-tab="stats" onclick="switchTab('stats')"><span>통계</span></button>
+    <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')"><span>설정</span></button>
+  </nav>
+
+  <!-- ===== ADD / EDIT MODAL ===== -->
+  <div class="modal" id="add-modal">
+    <div class="sheet">
+      <div class="sheet-hd">
+        <span class="cancel" onclick="closeAddModal()">취소</span>
+        <span class="title" id="sheet-title">기록 추가</span>
+        <span class="save" onclick="saveEntry()">저장</span>
+      </div>
+      <div class="sheet-body">
+
+        <div>
+          <div class="toggle2" id="form-type-toggle"></div>
+          <div class="item-chips" id="form-item-chips"></div>
+          <div class="finp" id="form-item-custom-wrap" style="display:none;margin-top:8px;padding:0">
+            <input class="finp" id="form-item-custom" placeholder="항목 직접입력">
+          </div>
+        </div>
+
+        <div>
+          <div class="field-lbl">보냄 / 받음</div>
+          <div class="toggle2" id="form-dir-toggle"></div>
+        </div>
+
+        <div class="frow2">
+          <div>
+            <div class="field-lbl">이름</div>
+            <input class="finp" id="form-name" placeholder="이름">
+          </div>
+          <div>
+            <div class="field-lbl">관계</div>
+            <select class="finp" id="form-relation">
+              <option value="가족">가족</option>
+              <option value="친구">친구</option>
+              <option value="직장">직장</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="amt-box">
+          <div class="field-lbl" style="margin-bottom:0">금액</div>
+          <input class="amt-input" id="form-amount" inputmode="numeric" placeholder="0" oninput="onAmountInput()">
+          <div class="amt-chips" id="form-amount-chips"></div>
+        </div>
+
+        <div class="frow2">
+          <div>
+            <div class="field-lbl">날짜</div>
+            <input class="finp" type="date" id="form-date">
+          </div>
+        </div>
+
+        <div>
+          <div class="field-lbl">메모</div>
+          <textarea class="ftextarea" id="form-memo" placeholder="메모 (선택)"></textarea>
+        </div>
+
+      </div>
+      <div class="sheet-foot">
+        <button class="btn-del" id="form-del-btn" style="display:none" onclick="deleteFromModal()">이 기록 삭제</button>
+      </div>
+    </div>
   </div>
 
-  <div class="row">
-    <div>
-      <label>이름</label>
-      <input type="text" id="in-name" placeholder="이름 입력">
-    </div>
-    <div>
-      <label>금액 (원)</label>
-      <input type="text" inputmode="numeric" id="in-amount" placeholder="예: 100,000" oninput="formatAmountInput(this)">
-    </div>
-  </div>
-
-  <button onclick="addEntry()">+ 추가</button>
 </div>
 
-<h2>경사</h2>
-<table>
-  <thead><tr><th>항목</th><th>구분</th><th>이름</th><th>금액</th><th></th></tr></thead>
-  <tbody id="list-경사"></tbody>
-</table>
-<div class="summary" id="summary-경사"></div>
-
-<h2>조사</h2>
-<table>
-  <thead><tr><th>항목</th><th>구분</th><th>이름</th><th>금액</th><th></th></tr></thead>
-  <tbody id="list-조사"></tbody>
-</table>
-<div class="summary" id="summary-조사"></div>
-
 <script>
-const EVENTS = {
-  '경사': ['결혼', '돌잔치', '직접입력'],
-  '조사': ['장례', '직접입력']
+// ================================================================
+// DATA
+// ================================================================
+const STORAGE_KEY = 'gyeongjo_v2_entries';
+const ITEM_PRESETS = { '경사': ['결혼','출산·돌','개업','승진'], '조사': ['장례','문병','기타'] };
+const RELATIONS = ['가족','친구','직장','기타'];
+const TYPE_COLOR = { '경사': 'var(--red)', '조사': 'var(--navy)' };
+const PALETTE = ['#c0442f','#2f4a7a','#8fa3c4','#dfe4ec','#caa24a','#5c8a6a'];
+
+let entries = load();
+
+let ui = {
+  tab: 'home',
+  homeFilter: 'all',      // all | sent | received | year
+  homeSearchOpen: false,
+  peopleRel: 'all',
+  statsScope: 'year',     // 'year' | 'all'
+  formType: '경사',
+  formItem: '결혼',
+  formDirection: '보냄',
+  editingId: null
 };
 
-const STORAGE_KEY = 'gyeongjo-entries';
-let entries = [];
-
 function load() {
-  try {
-    entries = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch (e) {
-    entries = [];
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch (e) { return []; }
+}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+
+function esc(s) { return (s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'"); }
+function won(n) { return (n || 0).toLocaleString('ko-KR'); }
+function manwon(n) {
+  const m = Math.round((n || 0) / 10000);
+  return m + '만';
+}
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function yearOf(dateStr) { return dateStr ? Number(dateStr.slice(0, 4)) : new Date().getFullYear(); }
+function monthOf(dateStr) { return dateStr ? Number(dateStr.slice(5, 7)) : new Date().getMonth() + 1; }
+function dateShort(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return m + '.' + d;
+}
+
+// ================================================================
+// NAV
+// ================================================================
+function switchTab(tab) {
+  ui.tab = tab;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + tab).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  renderCurrentTab();
+}
+
+function renderCurrentTab() {
+  if (ui.tab === 'home') renderHome();
+  else if (ui.tab === 'people') renderPeople();
+  else if (ui.tab === 'stats') renderStats();
+  else if (ui.tab === 'settings') renderSettings();
+}
+
+// ================================================================
+// HOME
+// ================================================================
+function toggleHomeSearch() {
+  ui.homeSearchOpen = !ui.homeSearchOpen;
+  document.getElementById('home-search-wrap').style.display = ui.homeSearchOpen ? 'block' : 'none';
+  if (!ui.homeSearchOpen) document.getElementById('home-search').value = '';
+  renderHome();
+}
+
+function setHomeFilter(f) { ui.homeFilter = f; renderHome(); }
+
+function renderHome() {
+  const now = new Date();
+  const curYear = now.getFullYear();
+  const yearEntries = entries.filter(e => yearOf(e.date) === curYear);
+  const sentThisYear = yearEntries.filter(e => e.direction === '보냄').reduce((s, e) => s + e.amount, 0);
+  const receivedThisYear = yearEntries.filter(e => e.direction === '받음').reduce((s, e) => s + e.amount, 0);
+  const prevYearSent = entries.filter(e => yearOf(e.date) === curYear - 1 && e.direction === '보냄').reduce((s, e) => s + e.amount, 0);
+  const diff = sentThisYear - prevYearSent;
+  const diffTxt = (diff >= 0 ? '+' : '−') + manwon(Math.abs(diff));
+
+  document.getElementById('home-summary').innerHTML = `
+    <div class="summary-top">
+      <span class="summary-lbl">${curYear}년 누적 지출</span>
+      <span class="summary-badge">${yearEntries.length}건</span>
+    </div>
+    <div class="summary-amt"><span class="n mono">${won(sentThisYear)}</span><span class="u">원</span></div>
+    <div class="summary-tiles">
+      <div class="stile"><div class="l">받은 금액</div><div class="v">${won(receivedThisYear)}</div></div>
+      <div class="stile"><div class="l">작년 대비</div><div class="v">${diffTxt}</div></div>
+    </div>`;
+
+  const chips = [
+    { k: 'all', l: '전체' }, { k: 'sent', l: '보냄' }, { k: 'received', l: '받음' }, { k: 'year', l: '올해' }
+  ];
+  document.getElementById('home-chips').innerHTML = chips.map(c =>
+    `<button class="chip${ui.homeFilter === c.k ? ' active' : ''}" onclick="setHomeFilter('${c.k}')">${c.l}</button>`
+  ).join('');
+
+  const q = (document.getElementById('home-search').value || '').trim().toLowerCase();
+  let list = entries.slice();
+  if (ui.homeFilter === 'sent') list = list.filter(e => e.direction === '보냄');
+  else if (ui.homeFilter === 'received') list = list.filter(e => e.direction === '받음');
+  else if (ui.homeFilter === 'year') list = list.filter(e => yearOf(e.date) === curYear);
+  if (q) list = list.filter(e => (e.name + ' ' + e.item + ' ' + (e.memo || '')).toLowerCase().includes(q));
+  list.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+  const wrap = document.getElementById('home-list');
+  if (!list.length) {
+    wrap.innerHTML = `<div class="empty"><span>📭</span><p>등록된 경조사비 기록이 없습니다.<br>아래 + 버튼으로 추가해 보세요.</p></div>`;
+    return;
   }
+
+  const groups = [];
+  let curKey = null, curGroup = null;
+  list.forEach(e => {
+    const key = yearOf(e.date) + '-' + String(monthOf(e.date)).padStart(2, '0');
+    if (key !== curKey) {
+      curKey = key;
+      curGroup = { key, year: yearOf(e.date), month: monthOf(e.date), rows: [] };
+      groups.push(curGroup);
+    }
+    curGroup.rows.push(e);
+  });
+
+  wrap.innerHTML = groups.map(g => {
+    const net = g.rows.reduce((s, e) => s + (e.direction === '보냄' ? -e.amount : e.amount), 0);
+    const label = (g.year === curYear ? '' : g.year + '년 ') + g.month + '월';
+    const netTxt = (net >= 0 ? '+' : '−') + won(Math.abs(net)) + '원';
+    const rows = g.rows.map(e => rowHtml(e)).join('');
+    return `<div class="month-hdr"><span>${label}</span><span>${netTxt}</span></div>
+      <div class="month-card">${rows}</div>`;
+  }).join('');
 }
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+function rowHtml(e) {
+  const isReceived = e.direction === '받음';
+  let badgeBg, badgeColor, badgeLabel;
+  if (isReceived) {
+    badgeBg = 'var(--navy)'; badgeColor = '#fff'; badgeLabel = '받음';
+  } else {
+    badgeBg = e.type === '경사' ? 'var(--red-tint2)' : 'var(--navy-tint2)';
+    badgeColor = e.type === '경사' ? 'var(--red)' : 'var(--navy)';
+    badgeLabel = e.item.length <= 2 ? e.item : e.item.slice(0, 2);
+  }
+  const amtColor = isReceived ? 'var(--navy)' : 'var(--ink)';
+  const amtTxt = (isReceived ? '+' : '−') + won(e.amount);
+  const subParts = [e.relation, dateShort(e.date)];
+  if (e.memo) subParts.push(e.memo);
+  return `<div class="row" onclick="openAddModal('${e.id}')">
+    <div class="badge" style="background:${badgeBg};color:${badgeColor}">${esc(badgeLabel)}</div>
+    <div><div class="r-name">${esc(e.name)}</div><div class="r-sub">${esc(subParts.filter(Boolean).join(' · '))}</div></div>
+    <div class="r-amt mono" style="color:${amtColor}">${amtTxt}</div>
+  </div>`;
 }
 
-function onTypeChange() {
-  const type = document.getElementById('in-type').value;
-  const sel = document.getElementById('in-event-select');
-  sel.innerHTML = EVENTS[type].map(ev => `<option value="${ev}">${ev}</option>`).join('');
-  onEventSelectChange();
+// ================================================================
+// PEOPLE
+// ================================================================
+function setPeopleRel(r) { ui.peopleRel = r; renderPeople(); }
+
+function aggregatePeople() {
+  const map = {};
+  entries.forEach(e => {
+    if (!map[e.name]) map[e.name] = { name: e.name, relation: e.relation, sent: 0, received: 0, count: 0 };
+    const p = map[e.name];
+    p.count++;
+    if (e.direction === '보냄') p.sent += e.amount; else p.received += e.amount;
+    p.relation = e.relation || p.relation;
+  });
+  return Object.values(map);
 }
 
-function onEventSelectChange() {
-  const isCustom = document.getElementById('in-event-select').value === '직접입력';
-  document.getElementById('in-event-custom-wrap').style.display = isCustom ? 'block' : 'none';
+function renderPeople() {
+  const people = aggregatePeople();
+  document.getElementById('people-title').textContent = `사람 ${people.length}명`;
+
+  const relCounts = {};
+  people.forEach(p => { relCounts[p.relation] = (relCounts[p.relation] || 0) + 1; });
+  const chips = [{ k: 'all', l: '전체' }].concat(RELATIONS.map(r => ({ k: r, l: `${r} ${relCounts[r] || 0}` })));
+  document.getElementById('people-chips').innerHTML = chips.map(c =>
+    `<button class="chip${ui.peopleRel === c.k ? ' active' : ''}" onclick="setPeopleRel('${c.k}')">${c.l}</button>`
+  ).join('');
+
+  const q = (document.getElementById('people-search').value || '').trim().toLowerCase();
+  let list = people;
+  if (ui.peopleRel !== 'all') list = list.filter(p => p.relation === ui.peopleRel);
+  if (q) list = list.filter(p => (p.name + ' ' + (p.relation || '')).toLowerCase().includes(q));
+  list.sort((a, b) => Math.abs(b.sent - b.received) - Math.abs(a.sent - a.received));
+
+  const wrap = document.getElementById('people-list');
+  if (!list.length) {
+    wrap.innerHTML = `<div class="empty"><span>👥</span><p>등록된 사람이 없습니다.</p></div>`;
+    return;
+  }
+
+  wrap.innerHTML = list.map(p => {
+    const net = p.received - p.sent;
+    const total = p.sent + p.received || 1;
+    const sentPct = Math.round((p.sent / total) * 100);
+    const initial = (p.name || '?').slice(0, 1);
+    let tagLabel, tagColor, tagBg, netColor;
+    if (net > 0) { tagLabel = '받은 쪽'; tagColor = 'var(--navy)'; tagBg = 'var(--navy-tint2)'; netColor = 'var(--navy)'; }
+    else if (net < 0) { tagLabel = '낸 쪽'; tagColor = 'var(--red)'; tagBg = 'var(--red-tint2)'; netColor = 'var(--red)'; }
+    else { tagLabel = '균형'; tagColor = 'var(--muted3)'; tagBg = 'var(--navy-tint)'; netColor = 'var(--muted3)'; }
+    const netTxt = net === 0 ? '0' : (net > 0 ? '+' : '−') + won(Math.abs(net));
+    return `<div class="p-card">
+      <div class="p-top">
+        <div class="p-avatar" style="background:var(--navy-tint);color:var(--navy)">${esc(initial)}</div>
+        <div class="p-info"><div class="p-name">${esc(p.name)}</div><div class="p-meta">${esc(p.relation || '기타')} · ${p.count}건</div></div>
+        <div class="p-right">
+          <div class="p-net mono" style="color:${netColor}">${netTxt}</div>
+          <span class="p-tag" style="background:${tagBg};color:${tagColor}">${tagLabel}</span>
+        </div>
+      </div>
+      <div class="p-bar"><div style="width:${sentPct}%;background:var(--red)"></div><div style="width:${100 - sentPct}%;background:var(--navy)"></div></div>
+      <div class="p-legend"><span>냄 ${won(p.sent)}</span><span>받음 ${won(p.received)}</span></div>
+    </div>`;
+  }).join('');
 }
 
-function formatAmountInput(el) {
+// ================================================================
+// STATS
+// ================================================================
+function setStatsScope(s) { ui.statsScope = s; renderStats(); }
+
+function renderStats() {
+  const curYear = new Date().getFullYear();
+  document.getElementById('stats-scope-chips').innerHTML = `
+    <button class="chip${ui.statsScope === 'year' ? ' active' : ''}" onclick="setStatsScope('year')">${curYear}</button>
+    <button class="chip${ui.statsScope === 'all' ? ' active' : ''}" onclick="setStatsScope('all')">전체</button>`;
+
+  const scoped = ui.statsScope === 'year' ? entries.filter(e => yearOf(e.date) === curYear) : entries.slice();
+  const sent = scoped.filter(e => e.direction === '보냄');
+  const totalSent = sent.reduce((s, e) => s + e.amount, 0);
+  const avg = sent.length ? Math.round(totalSent / sent.length) : 0;
+  const prevYearSent = entries.filter(e => yearOf(e.date) === curYear - 1 && e.direction === '보냄').reduce((s, e) => s + e.amount, 0);
+  const diff = totalSent - prevYearSent;
+
+  // ---- bar chart ----
+  let buckets, barsHtml;
+  if (ui.statsScope === 'year') {
+    buckets = Array.from({ length: 12 }, (_, i) => ({ label: String(i + 1), amount: 0 }));
+    sent.forEach(e => { buckets[monthOf(e.date) - 1].amount += e.amount; });
+    const curMonth = new Date().getMonth() + 1;
+    const max = Math.max(1, ...buckets.map(b => b.amount));
+    barsHtml = buckets.map((b, i) => {
+      const h = Math.max(4, Math.round((b.amount / max) * 80));
+      const isCur = (i + 1) === curMonth;
+      const bg = b.amount === 0 ? 'var(--navy-tint)' : (isCur ? 'var(--red)' : 'var(--navy)');
+      return `<div class="bar-col"><div class="bar" style="height:${h}px;background:${bg}"></div><span class="bar-lbl">${b.label}</span></div>`;
+    }).join('');
+  } else {
+    const years = [...new Set(entries.map(e => yearOf(e.date)))].sort();
+    buckets = years.map(y => ({ label: String(y), amount: entries.filter(e => yearOf(e.date) === y && e.direction === '보냄').reduce((s, e) => s + e.amount, 0) }));
+    const max = Math.max(1, ...buckets.map(b => b.amount));
+    barsHtml = buckets.map(b => {
+      const h = Math.max(4, Math.round((b.amount / max) * 80));
+      return `<div class="bar-col"><div class="bar" style="height:${h}px;background:var(--navy)"></div><span class="bar-lbl">${b.label}</span></div>`;
+    }).join('');
+  }
+
+  // ---- by item type ----
+  const itemMap = {};
+  sent.forEach(e => {
+    if (!itemMap[e.item]) itemMap[e.item] = { name: e.item, count: 0, amount: 0 };
+    itemMap[e.item].count++; itemMap[e.item].amount += e.amount;
+  });
+  let itemList = Object.values(itemMap).sort((a, b) => b.amount - a.amount);
+  if (itemList.length > 4) {
+    const rest = itemList.slice(3);
+    const restSum = rest.reduce((s, i) => s + i.amount, 0);
+    const restCount = rest.reduce((s, i) => s + i.count, 0);
+    itemList = itemList.slice(0, 3).concat([{ name: '기타', count: restCount, amount: restSum }]);
+  }
+  const itemTotal = itemList.reduce((s, i) => s + i.amount, 0) || 1;
+  const stackedHtml = itemList.map((i, idx) =>
+    `<div style="width:${Math.round((i.amount / itemTotal) * 100)}%;background:${PALETTE[idx % PALETTE.length]}"></div>`
+  ).join('');
+  const typeListHtml = itemList.map((i, idx) =>
+    `<div class="type-row"><span class="type-dot" style="background:${PALETTE[idx % PALETTE.length]}"></span><span class="name">${esc(i.name)} ${i.count}건</span><span class="amt">${won(i.amount)}</span></div>`
+  ).join('');
+
+  // ---- by relation ----
+  const relMap = {};
+  RELATIONS.forEach(r => { relMap[r] = { sum: 0, count: 0 }; });
+  sent.forEach(e => { const r = e.relation || '기타'; if (!relMap[r]) relMap[r] = { sum: 0, count: 0 }; relMap[r].sum += e.amount; relMap[r].count++; });
+  const relTilesHtml = Object.keys(relMap).map(r => {
+    const d = relMap[r];
+    const avgR = d.count ? Math.round(d.sum / d.count) : 0;
+    return `<div class="rel-tile"><div class="v">${d.count ? manwon(avgR) : '−'}</div><div class="l">${esc(r)}</div></div>`;
+  }).join('');
+
+  document.getElementById('stats-body').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-lbl">${ui.statsScope === 'year' ? curYear + '년 낸 경조금' : '전체 낸 경조금'}</div>
+      <div class="stat-big"><span class="n">${won(totalSent)}</span><span class="u">원</span></div>
+      <div class="stat-tags">
+        ${ui.statsScope === 'year' ? `<span class="stat-tag" style="background:var(--red-tint2);color:var(--red)">${(diff >= 0 ? '+' : '−') + manwon(Math.abs(diff))} 전년비</span>` : ''}
+        <span class="stat-tag" style="background:var(--navy-tint);color:var(--muted3)">건당 평균 ${manwon(avg)}</span>
+      </div>
+      <div class="bars">${barsHtml}</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-lbl">종류별</div>
+      ${itemList.length ? `<div class="stacked">${stackedHtml}</div><div class="type-list">${typeListHtml}</div>` : `<div style="padding:20px 0;color:var(--muted);font-size:13px;text-align:center">데이터가 없습니다</div>`}
+    </div>
+
+    <div class="rel-card">
+      <div class="stat-lbl" style="color:rgba(47,74,122,.75)">관계별 평균 (보낸 금액)</div>
+      <div class="rel-tiles">${relTilesHtml}</div>
+    </div>`;
+}
+
+// ================================================================
+// SETTINGS
+// ================================================================
+function renderSettings() {
+  document.getElementById('set-count').textContent = entries.length + '건';
+  document.getElementById('set-people').textContent = aggregatePeople().length + '명';
+}
+function resetAll() {
+  if (!confirm('모든 경조사비 기록을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) return;
+  entries = [];
+  save();
+  renderCurrentTab();
+}
+
+// ================================================================
+// ADD / EDIT MODAL
+// ================================================================
+function openAddModal(id) {
+  ui.editingId = id || null;
+  const e = id ? entries.find(x => x.id === id) : null;
+
+  ui.formType = e ? e.type : '경사';
+  ui.formDirection = e ? e.direction : '보냄';
+  const preset = ITEM_PRESETS[ui.formType];
+  ui.formItem = e ? (preset.includes(e.item) ? e.item : '직접입력') : preset[0];
+
+  document.getElementById('sheet-title').textContent = id ? '기록 수정' : '기록 추가';
+  document.getElementById('form-del-btn').style.display = id ? 'block' : 'none';
+  document.getElementById('form-name').value = e ? e.name : '';
+  document.getElementById('form-relation').value = e ? (e.relation || '기타') : '기타';
+  document.getElementById('form-amount').value = e ? won(e.amount) : '';
+  document.getElementById('form-date').value = e ? e.date : todayStr();
+  document.getElementById('form-memo').value = e ? (e.memo || '') : '';
+  document.getElementById('form-item-custom').value = (e && ui.formItem === '직접입력') ? e.item : '';
+
+  renderFormType();
+  renderFormItems();
+  renderFormDirection();
+  renderFormAmountChips();
+
+  document.getElementById('add-modal').classList.add('open');
+}
+
+function closeAddModal() {
+  document.getElementById('add-modal').classList.remove('open');
+  ui.editingId = null;
+}
+
+function renderFormType() {
+  document.getElementById('form-type-toggle').innerHTML = ['경사', '조사'].map(t =>
+    `<button class="opt type-${t}${ui.formType === t ? ' active' : ''}" onclick="selectFormType('${t}')">${t}</button>`
+  ).join('');
+}
+function selectFormType(t) {
+  ui.formType = t;
+  ui.formItem = ITEM_PRESETS[t][0];
+  renderFormType(); renderFormItems(); renderFormAmountChips();
+}
+
+function renderFormItems() {
+  const preset = ITEM_PRESETS[ui.formType].concat(['직접입력']);
+  document.getElementById('form-item-chips').innerHTML = preset.map(i =>
+    `<button class="item-chip${ui.formItem === i ? ' active' : ''}" onclick="selectFormItem('${esc(i)}')">${i}</button>`
+  ).join('');
+  document.getElementById('form-item-custom-wrap').style.display = ui.formItem === '직접입력' ? 'block' : 'none';
+}
+function selectFormItem(i) { ui.formItem = i; renderFormItems(); }
+
+function renderFormDirection() {
+  document.getElementById('form-dir-toggle').innerHTML = ['보냄', '받음'].map(d =>
+    `<button class="opt dir${ui.formDirection === d ? ' active' : ''}" onclick="selectFormDirection('${d}')">${d}</button>`
+  ).join('');
+}
+function selectFormDirection(d) { ui.formDirection = d; renderFormDirection(); }
+
+function renderFormAmountChips() {
+  const opts = [50000, 100000, 150000, 200000];
+  document.getElementById('form-amount-chips').innerHTML = opts.map(v => {
+    const active = Number((document.getElementById('form-amount').value || '').replace(/[^0-9]/g, '')) === v;
+    return `<button class="amt-chip${active ? ' active type-' + ui.formType : ''}" onclick="pickAmount(${v})">${v / 10000}만</button>`;
+  }).join('');
+}
+function pickAmount(v) {
+  document.getElementById('form-amount').value = won(v);
+  renderFormAmountChips();
+}
+function onAmountInput() {
+  const el = document.getElementById('form-amount');
   const digits = el.value.replace(/[^0-9]/g, '');
-  el.value = digits ? Number(digits).toLocaleString('ko-KR') : '';
+  el.value = digits ? won(Number(digits)) : '';
+  renderFormAmountChips();
 }
 
-function addEntry() {
-  const type = document.getElementById('in-type').value;
-  const dir = document.getElementById('in-dir').value;
-  const eventSel = document.getElementById('in-event-select').value;
-  const event = eventSel === '직접입력'
-    ? document.getElementById('in-event-custom').value.trim()
-    : eventSel;
-  const name = document.getElementById('in-name').value.trim();
-  const amount = Number(document.getElementById('in-amount').value.replace(/[^0-9]/g, ''));
+function saveEntry() {
+  const item = ui.formItem === '직접입력' ? document.getElementById('form-item-custom').value.trim() : ui.formItem;
+  const name = document.getElementById('form-name').value.trim();
+  const amount = Number((document.getElementById('form-amount').value || '').replace(/[^0-9]/g, ''));
+  const date = document.getElementById('form-date').value || todayStr();
+  const relation = document.getElementById('form-relation').value;
+  const memo = document.getElementById('form-memo').value.trim();
 
-  if (!event) { alert('경조사 항목을 입력해 주세요.'); return; }
+  if (!item) { alert('경조사 항목을 입력해 주세요.'); return; }
   if (!name) { alert('이름을 입력해 주세요.'); return; }
   if (!amount) { alert('금액을 입력해 주세요.'); return; }
 
-  entries.push({ id: Date.now(), type, dir, event, name, amount });
+  const data = { type: ui.formType, item, direction: ui.formDirection, name, relation, amount, date, memo };
+
+  if (ui.editingId) {
+    const idx = entries.findIndex(e => e.id === ui.editingId);
+    if (idx > -1) entries[idx] = { ...entries[idx], ...data };
+  } else {
+    entries.push({ id: 'e' + Date.now(), ...data });
+  }
   save();
-  render();
-
-  document.getElementById('in-name').value = '';
-  document.getElementById('in-amount').value = '';
+  closeAddModal();
+  renderCurrentTab();
 }
 
-function deleteEntry(id) {
-  entries = entries.filter(e => e.id !== id);
+function deleteFromModal() {
+  if (!ui.editingId) return;
+  if (!confirm('이 기록을 삭제하시겠습니까?')) return;
+  entries = entries.filter(e => e.id !== ui.editingId);
   save();
-  render();
+  closeAddModal();
+  renderCurrentTab();
 }
 
-function render() {
-  ['경사', '조사'].forEach(type => {
-    const tbody = document.getElementById('list-' + type);
-    const rows = entries.filter(e => e.type === type);
-    if (!rows.length) {
-      tbody.innerHTML = `<tr class="empty-row"><td colspan="5">등록된 내역이 없습니다.</td></tr>`;
-    } else {
-      tbody.innerHTML = rows.map(e => `
-        <tr>
-          <td>${e.event}</td>
-          <td class="dir-${e.dir}">${e.dir}</td>
-          <td>${e.name}</td>
-          <td>${e.amount.toLocaleString('ko-KR')}원</td>
-          <td><button class="del-btn" onclick="deleteEntry(${e.id})">✕</button></td>
-        </tr>
-      `).join('');
-    }
-    const sent = rows.filter(e => e.dir === '보냄').reduce((s, e) => s + e.amount, 0);
-    const received = rows.filter(e => e.dir === '받음').reduce((s, e) => s + e.amount, 0);
-    document.getElementById('summary-' + type).innerHTML =
-      `보낸 금액 합계: <b>${sent.toLocaleString('ko-KR')}원</b> &nbsp;|&nbsp; 받은 금액 합계: <b>${received.toLocaleString('ko-KR')}원</b>`;
-  });
-}
+document.getElementById('add-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeAddModal(); });
 
-load();
-onTypeChange();
-render();
+// ================================================================
+// INIT
+// ================================================================
+renderHome();
 </script>
 </body>
 </html>

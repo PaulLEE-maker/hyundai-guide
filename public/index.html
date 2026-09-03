@@ -30,7 +30,7 @@ input,textarea{font-family:inherit}
 .screen.active{display:block}
 
 /* ---- header / summary (home) ---- */
-.hd{display:flex;justify-content:space-between;align-items:center;padding:20px 18px 12px}
+.hd{display:flex;justify-content:space-between;align-items:center;padding:20px 18px 12px;cursor:pointer}
 .hd-title{font:600 19px 'NanumSquare',sans-serif;color:var(--ink)}
 .hd-icons{display:flex;gap:8px}
 .icon-btn{width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(16,20,24,.10);border:none;display:flex;align-items:center;justify-content:center;color:var(--muted3);font-size:18px}
@@ -179,7 +179,7 @@ input,textarea{font-family:inherit}
 
   <!-- ===== HOME ===== -->
   <div class="screen active" id="screen-home">
-    <div class="hd">
+    <div class="hd" onclick="scrollActiveToTop(event)">
       <div class="hd-title">경조사비</div>
       <div class="hd-icons">
         <button class="icon-btn" onclick="toggleHomeSearch()">⌕</button>
@@ -197,7 +197,7 @@ input,textarea{font-family:inherit}
 
   <!-- ===== PEOPLE ===== -->
   <div class="screen" id="screen-people">
-    <div class="hd">
+    <div class="hd" onclick="scrollActiveToTop(event)">
       <div class="hd-title" id="people-title">사람</div>
     </div>
     <div class="search-wrap">
@@ -210,7 +210,7 @@ input,textarea{font-family:inherit}
 
   <!-- ===== STATS ===== -->
   <div class="screen" id="screen-stats">
-    <div class="hd">
+    <div class="hd" onclick="scrollActiveToTop(event)">
       <div class="hd-title">통계</div>
       <div class="chips" id="stats-scope-chips" style="margin:0"></div>
     </div>
@@ -219,7 +219,7 @@ input,textarea{font-family:inherit}
 
   <!-- ===== SETTINGS ===== -->
   <div class="screen" id="screen-settings">
-    <div class="hd"><div class="hd-title">설정</div></div>
+    <div class="hd" onclick="scrollActiveToTop(event)"><div class="hd-title">설정</div></div>
     <div class="settings-wrap">
       <div class="set-card">
         <div class="l">동기화</div>
@@ -459,6 +459,12 @@ function renderCurrentTab() {
   else if (ui.tab === 'people') renderPeople();
   else if (ui.tab === 'stats') renderStats();
   else if (ui.tab === 'settings') renderSettings();
+}
+
+function scrollActiveToTop(e) {
+  if (e && e.target.closest('button, input, select, textarea, a')) return;
+  const el = document.querySelector('.screen.active');
+  if (el) el.scrollTo({ top: 0, behavior: 'auto' });
 }
 
 // ================================================================

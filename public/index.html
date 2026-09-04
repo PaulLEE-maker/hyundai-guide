@@ -1428,6 +1428,12 @@ document.addEventListener('focusout', e => {
 });
 
 load();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
 </script>
 
 <!-- Firebase: Google 로그인 + Firestore 동기화 (여행플래너와 동일한 방식) -->

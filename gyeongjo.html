@@ -504,14 +504,17 @@ function renderHome() {
   if (ui.homeFilter === 'all') {
     summaryEl.style.background = 'var(--purple)';
     summaryEl.style.boxShadow = '0 8px 22px rgba(91,63,140,.28)';
+    const net = totalReceivedAll - totalSentAll;
+    const netTxt = (net >= 0 ? '+' : '−') + won(Math.abs(net));
     summaryEl.innerHTML = `
       <div class="summary-top">
         <span class="summary-lbl">경조사비 현황</span>
         <span class="summary-badge">${entries.length}건</span>
       </div>
-      <div class="summary-tiles" style="margin-top:14px">
-        <div class="stile"><div class="l">받은 금액</div><div class="v" style="font-size:19px">${won(totalReceivedAll)}원</div></div>
-        <div class="stile"><div class="l">보낸 금액</div><div class="v" style="font-size:19px">${won(totalSentAll)}원</div></div>
+      <div class="summary-amt"><span class="n mono">${netTxt}</span><span class="u">원</span></div>
+      <div class="summary-tiles">
+        <div class="stile"><div class="l">받은 금액</div><div class="v">${won(totalReceivedAll)}원</div></div>
+        <div class="stile"><div class="l">보낸 금액</div><div class="v">${won(totalSentAll)}원</div></div>
       </div>`;
   } else {
     const isSent = ui.homeFilter === 'sent';

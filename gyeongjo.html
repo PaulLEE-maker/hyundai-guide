@@ -561,7 +561,7 @@ function rowHtml(e) {
   if (isReceived) {
     badgeBg = 'var(--red)'; badgeColor = '#fff'; badgeLabel = '받음';
   } else {
-    badgeBg = 'var(--navy-tint2)'; badgeColor = 'var(--navy)';
+    badgeBg = 'var(--navy)'; badgeColor = '#fff';
     badgeLabel = e.item.length <= 2 ? e.item : e.item.slice(0, 2);
   }
   const amtColor = isReceived ? 'var(--red)' : 'var(--navy)';

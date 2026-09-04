@@ -290,6 +290,19 @@ input,textarea{font-family:inherit}
       </div>
       <div class="set-card"><div class="l">전체 기록</div><div class="v" id="set-count">0건</div></div>
       <div class="set-card"><div class="l">등록된 사람</div><div class="v" id="set-people">0명</div></div>
+
+      <div class="set-card">
+        <div class="l">엑셀로 한번에 추가하기</div>
+        <div style="font:400 12px 'NanumSquare',sans-serif;color:var(--muted2);margin-top:6px;line-height:1.5">
+          양식을 내려받아 채운 뒤 업로드하면 기록이 한번에 추가돼요.
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+          <button class="btn-outline" onclick="downloadExcelTemplate()">엑셀 양식 다운로드</button>
+          <button class="btn-outline" onclick="document.getElementById('excel-file-input').click()">엑셀 업로드</button>
+          <input type="file" id="excel-file-input" accept=".xlsx,.xls" style="display:none" onchange="handleExcelUpload(event)">
+        </div>
+      </div>
+
       <button class="btn-danger" onclick="resetAll()">전체 데이터 초기화</button>
     </div>
   </div>
@@ -406,6 +419,7 @@ input,textarea{font-family:inherit}
   };
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 // ================================================================
 // DATA
@@ -988,6 +1002,83 @@ function resetAll() {
     : '모든 경조사비 기록을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.';
   if (!confirm(msg)) return;
   persistDeleteMany(entries.map(e => e.id));
+}
+
+// ================================================================
+// EXCEL IMPORT / EXPORT
+// ================================================================
+const EXCEL_HEADERS = ['구분(경사/조사)', '항목', '방향(보냄/받음)', '이름', '관계', '금액', '날짜(YYYY-MM-DD)', '메모'];
+
+function downloadExcelTemplate() {
+  if (typeof XLSX === 'undefined') { toast('엑셀 기능을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'); return; }
+  const rows = [
+    EXCEL_HEADERS,
+    ['경사', '결혼', '보냄', '홍길동', '친구', 50000, '2026-05-10', '축하합니다'],
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 14 }, { wch: 10 }, { wch: 14 }, { wch: 10 }, { wch: 8 }, { wch: 10 }, { wch: 16 }, { wch: 20 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '경조사비');
+  XLSX.writeFile(wb, '경조사비_양식.xlsx');
+}
+
+function normalizeExcelDate(v) {
+  if (!v) return '';
+  if (v instanceof Date && !isNaN(v)) {
+    const y = v.getFullYear(), m = String(v.getMonth() + 1).padStart(2, '0'), d = String(v.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  const m1 = String(v).trim().match(/^(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+  return m1 ? `${m1[1]}-${m1[2].padStart(2, '0')}-${m1[3].padStart(2, '0')}` : '';
+}
+
+function importExcelRows(rows) {
+  let added = 0, skipped = 0;
+  rows.forEach(row => {
+    const name = String(row['이름'] || '').trim();
+    const amount = Number(String(row['금액'] || '').replace(/[^0-9]/g, ''));
+    if (!name || !amount) { skipped++; return; }
+
+    let type = String(row['구분(경사/조사)'] || row['구분'] || '').trim();
+    if (!['경사', '조사'].includes(type)) type = '경사';
+
+    let direction = String(row['방향(보냄/받음)'] || row['방향'] || '').trim();
+    if (!['보냄', '받음'].includes(direction)) direction = '보냄';
+
+    let item = String(row['항목'] || '').trim();
+    if (!item) item = ITEM_PRESETS[type][0];
+
+    let relation = String(row['관계'] || '').trim();
+    if (!RELATIONS.includes(relation)) relation = '기타';
+
+    const date = normalizeExcelDate(row['날짜(YYYY-MM-DD)'] || row['날짜']) || todayStr();
+    const memo = String(row['메모'] || '').trim();
+
+    entries.push({ id: 'e' + Date.now() + Math.random().toString(36).slice(2, 7), type, item, direction, name, relation, amount, date, memo });
+    added++;
+  });
+  if (added) { save(); render(); }
+  toast(added ? `${added}건 가져왔어요${skipped ? ` (${skipped}건 건너뜀)` : ''}` : '가져올 수 있는 기록이 없어요');
+}
+
+function handleExcelUpload(event) {
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  if (typeof XLSX === 'undefined') { toast('엑셀 기능을 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const wb = XLSX.read(ev.target.result, { type: 'array', cellDates: true });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      importExcelRows(rows);
+    } catch (err) {
+      console.error(err);
+      toast('엑셀 파일을 읽지 못했어요. 양식을 확인해 주세요.');
+    }
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 function openReplyModalForName(name) {

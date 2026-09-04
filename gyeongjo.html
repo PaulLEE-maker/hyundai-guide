@@ -73,16 +73,15 @@ input,textarea{font-family:inherit}
 .sch-card .body{flex:1;min-width:0}
 .sch-card .name{font:600 14.5px 'NanumSquare',sans-serif;color:var(--ink)}
 .sch-card .meta{font:400 11.5px 'NanumSquare',sans-serif;color:var(--muted2);margin-top:2px}
-.sch-name-wrap{position:relative}
 
 /* ---- schedule calendar ---- */
 .cal-hd{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 12px}
 .cal-hd button{background:var(--bg);border:none;width:30px;height:30px;border-radius:50%;font-size:15px;color:var(--ink)}
 .cal-hd .lbl{font:600 15px 'NanumSquare',sans-serif;color:var(--ink)}
-.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);padding:0 20px;font:500 11px 'NanumSquare',sans-serif;color:var(--muted2);text-align:center;margin-bottom:6px}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:0 20px;gap:2px}
-.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;font:400 13px 'NanumSquare',sans-serif;color:var(--ink);cursor:pointer;gap:3px}
-.cal-cell.empty{cursor:default}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));padding:0 20px;font:500 11px 'NanumSquare',sans-serif;color:var(--muted2);text-align:center;margin-bottom:6px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));padding:0 20px;gap:2px}
+.cal-cell{height:44px;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;font:400 13px 'NanumSquare',sans-serif;color:var(--ink);cursor:pointer;gap:3px}
+.cal-cell.blank{cursor:default}
 .cal-cell.today .n{font-weight:700;color:var(--navy)}
 .cal-cell.selected{background:var(--ink)}
 .cal-cell.selected .n{color:#fff}
@@ -91,7 +90,7 @@ input,textarea{font-family:inherit}
 .cal-day-list{padding:16px 20px 4px}
 .cal-day-hdr{font:500 11px 'NanumSquare',sans-serif;color:var(--muted2);margin-bottom:8px}
 
-/* ---- add person schedule (사람 tab +) ---- */
+/* ---- '기억할 경조일정' rows inside the 기록 추가/수정 폼 ---- */
 .psched-rows{display:flex;flex-direction:column;gap:10px}
 .psched-row{display:flex;gap:8px;align-items:center}
 .psched-row .finp{flex:1}
@@ -247,9 +246,6 @@ input,textarea{font-family:inherit}
   <div class="screen" id="screen-people">
     <div class="hd" onclick="scrollActiveToTop(event)">
       <div class="hd-title" id="people-title">사람</div>
-      <div class="hd-icons">
-        <button class="icon-btn" onclick="openPersonScheduleForm()">+</button>
-      </div>
     </div>
     <div class="search-wrap">
       <div class="search-box"><span>⌕</span><input id="people-search" placeholder="이름 또는 관계로 검색" oninput="renderPeople()"></div>
@@ -348,6 +344,12 @@ input,textarea{font-family:inherit}
           <textarea class="ftextarea" id="form-memo" placeholder="메모 (선택)"></textarea>
         </div>
 
+        <div>
+          <div class="field-lbl">기억할 경조일정 (선택)</div>
+          <div class="psched-rows" id="psched-rows"></div>
+          <button type="button" class="psched-add" onclick="addPschedRow()">+ 일정 추가</button>
+        </div>
+
       </div>
       <div class="sheet-foot">
         <button class="btn-del" id="form-del-btn" style="display:none" onclick="deleteFromModal()">이 기록 삭제</button>
@@ -376,42 +378,6 @@ input,textarea{font-family:inherit}
     </div>
   </div>
 
-  <!-- ===== 사람 탭 '+' : 기억할 경조일정 등록 ===== -->
-  <div class="modal" id="person-schedule-modal">
-    <div class="sheet">
-      <div class="sheet-hd">
-        <span class="cancel" onclick="closePersonScheduleForm()">취소</span>
-        <span class="title">경조일정 등록</span>
-        <span class="save" onclick="savePersonSchedule()">저장</span>
-      </div>
-      <div class="sheet-body">
-
-        <div class="frow2">
-          <div class="sch-name-wrap">
-            <div class="field-lbl">이름</div>
-            <input class="finp" id="psched-name" list="psched-name-options" placeholder="이름 검색 또는 입력" oninput="onPschedNameInput()">
-            <datalist id="psched-name-options"></datalist>
-          </div>
-          <div>
-            <div class="field-lbl">관계</div>
-            <select class="finp" id="psched-relation">
-              <option value="가족">가족</option>
-              <option value="친구">친구</option>
-              <option value="직장">직장</option>
-              <option value="기타">기타</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <div class="field-lbl">기억할 경조일정</div>
-          <div class="psched-rows" id="psched-rows"></div>
-          <button class="psched-add" onclick="addPschedRow()">+ 일정 추가</button>
-        </div>
-
-      </div>
-    </div>
-  </div>
 
 </div>
 
@@ -995,6 +961,9 @@ function openAddModal(id) {
   renderFormDirection();
   renderFormAmountChips();
 
+  pschedRows = [{ key: ++pschedKeySeq, date: '', memo: '' }];
+  renderPschedRows();
+
   document.getElementById('add-modal').classList.add('open');
 }
 
@@ -1063,6 +1032,10 @@ function saveEntry() {
   const data = { type: ui.formType, item, direction: ui.formDirection, name, relation, amount, date, memo };
 
   persistUpsert(ui.editingId, data);
+
+  const schedItems = pschedRows.filter(r => r.date).map(r => ({ name, relation, date: r.date, memo: r.memo.trim() }));
+  if (schedItems.length) persistScheduleAddMany(schedItems);
+
   closeAddModal();
 }
 
@@ -1077,8 +1050,9 @@ document.getElementById('add-modal').addEventListener('click', e => { if (e.targ
 
 // ================================================================
 // SCHEDULES (기억할 경조일정) — a lightweight reminder layer, separate
-// from actual money records. "열람"(view the calendar) + "알림"
-// (badge/banner) only; adding happens from the 사람 탭's '+'.
+// from actual money records. The calendar (bell icon) is "열람"(view)
+// + "알림"(badge/banner) only; adding happens inside the existing
+// 기록 추가/수정 폼 (see the '기억할 경조일정' rows there).
 // ================================================================
 function dayDiff(dateStr) {
   if (!dateStr) return 0;
@@ -1162,7 +1136,7 @@ function renderCalendar() {
   const today = todayStr();
 
   const cells = [];
-  for (let i = 0; i < startDow; i++) cells.push('<div class="cal-cell empty"></div>');
+  for (let i = 0; i < startDow; i++) cells.push('<div class="cal-cell blank"></div>');
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     const has = byDate[dateStr];
@@ -1191,42 +1165,16 @@ function renderCalendar() {
   }).join('');
 }
 
-// ---- 사람 탭 '+' : 기억할 경조일정 등록 (n개 추가 가능) ----
+// ---- 기록 추가/수정 폼 안의 '기억할 경조일정' 행 (n개 추가 가능) ----
 let pschedRows = [];
 let pschedKeySeq = 0;
-
-function openPersonScheduleForm() {
-  document.getElementById('psched-name').value = '';
-  document.getElementById('psched-relation').value = '기타';
-  pschedRows = [{ key: ++pschedKeySeq, date: '', memo: '' }];
-  renderPschedNameOptions();
-  renderPschedRows();
-  document.getElementById('person-schedule-modal').classList.add('open');
-}
-function closePersonScheduleForm() {
-  document.getElementById('person-schedule-modal').classList.remove('open');
-}
-document.getElementById('person-schedule-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closePersonScheduleForm(); });
-
-function renderPschedNameOptions() {
-  const names = new Set();
-  aggregatePeople().forEach(p => names.add(p.name));
-  schedules.forEach(s => names.add(s.name));
-  document.getElementById('psched-name-options').innerHTML =
-    [...names].map(n => `<option value="${escapeHtml(n)}">`).join('');
-}
-function onPschedNameInput() {
-  const name = document.getElementById('psched-name').value.trim();
-  const person = aggregatePeople().find(p => p.name === name);
-  if (person) document.getElementById('psched-relation').value = person.relation || '기타';
-}
 
 function renderPschedRows() {
   document.getElementById('psched-rows').innerHTML = pschedRows.map(r => `
     <div class="psched-row">
       <input class="finp" type="date" value="${r.date}" onchange="updatePschedRow(${r.key}, 'date', this.value)">
       <input class="finp" placeholder="무슨 일정인가요? (예: 결혼식)" value="${escapeHtml(r.memo)}" oninput="updatePschedRow(${r.key}, 'memo', this.value)">
-      ${pschedRows.length > 1 ? `<button class="psched-remove" onclick="removePschedRow(${r.key})">✕</button>` : ''}
+      ${pschedRows.length > 1 ? `<button type="button" class="psched-remove" onclick="removePschedRow(${r.key})">✕</button>` : ''}
     </div>`).join('');
 }
 function updatePschedRow(key, field, value) {
@@ -1240,19 +1188,6 @@ function addPschedRow() {
 function removePschedRow(key) {
   pschedRows = pschedRows.filter(r => r.key !== key);
   renderPschedRows();
-}
-
-function savePersonSchedule() {
-  const name = document.getElementById('psched-name').value.trim();
-  const relation = document.getElementById('psched-relation').value;
-  if (!name) { alert('이름을 입력해 주세요.'); return; }
-
-  const valid = pschedRows.filter(r => r.date);
-  if (!valid.length) { alert('날짜를 하나 이상 입력해 주세요.'); return; }
-
-  persistScheduleAddMany(valid.map(r => ({ name, relation, date: r.date, memo: r.memo.trim() })));
-  closePersonScheduleForm();
-  toast(`일정 ${valid.length}건을 등록했어요`);
 }
 
 // ================================================================

@@ -1,6 +1,6 @@
 {
-  "name": "경조사비 관리",
-  "short_name": "경조사비",
+  "name": "마음기록",
+  "short_name": "마음기록",
   "description": "경조사비 보낸/받은 기록과 다가오는 경조사 일정을 관리하는 앱",
   "start_url": "gyeongjo.html",
   "scope": ".",

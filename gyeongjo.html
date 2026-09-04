@@ -7,7 +7,7 @@
 // 그래서 절대 캐시되지 않는 별도의 작은 버전 파일을 매번 직접 확인해서,
 // 버전이 다르면 (캐시를 무조건 우회하는) 새 주소로 강제 이동시킨다.
 (function () {
-  var CURRENT_VERSION = 2;
+  var CURRENT_VERSION = 3;
   try {
     if (sessionStorage.getItem('vcheck_done')) return; // 한 세션에 한 번만 시도 (무한 새로고침 방지)
     fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
@@ -90,6 +90,7 @@ input,textarea{font-family:inherit}
 .chips{display:flex;gap:7px;margin:16px 18px 6px;flex-wrap:wrap}
 .chip{padding:7px 13px;border-radius:18px;background:#fff;color:var(--muted3);font:400 12px 'NanumSquare',sans-serif;box-shadow:0 1px 2px rgba(16,20,24,.07);border:none}
 .chip.active{background:var(--ink);color:#fff;box-shadow:none}
+.sort-sel{padding:6px 10px;border-radius:18px;background:#fff;color:var(--muted3);font:400 12px 'NanumSquare',sans-serif;box-shadow:0 1px 2px rgba(16,20,24,.07);border:none;-webkit-appearance:none;appearance:none}
 
 .sample-banner{margin:14px 18px 0;background:var(--red-tint);color:var(--red);border-radius:14px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font:400 12px 'NanumSquare',sans-serif}
 .sample-banner button{background:none;border:none;color:var(--red);font:600 12px 'NanumSquare',sans-serif;flex-shrink:0;white-space:nowrap}
@@ -287,6 +288,7 @@ input,textarea{font-family:inherit}
     <div id="sch-banner-wrap"></div>
     <div id="sample-banner-wrap"></div>
     <div class="chips" id="home-chips"></div>
+    <div class="chips" id="home-sort-wrap" style="margin-top:0;justify-content:flex-end"></div>
     <div class="list-wrap" id="home-list"></div>
   </div>
 
@@ -300,6 +302,7 @@ input,textarea{font-family:inherit}
     </div>
     <div class="chips" id="people-chips"></div>
     <div class="chips" id="people-dir-chips" style="margin-top:0"></div>
+    <div class="chips" id="people-sort-wrap" style="margin-top:0;justify-content:flex-end"></div>
     <div class="people-list" id="people-list" style="margin-top:6px"></div>
   </div>
 
@@ -483,8 +486,10 @@ let ui = {
   homeFilter: 'all',      // all | sent | received
   homeYear: 'all',        // 'all' or a specific year (only used for sent/received)
   homeSearchOpen: false,
+  homeSort: 'date',       // date | name_asc | name_desc | amount_asc | amount_desc
   peopleRel: 'all',
   peopleDir: 'all',       // all | received | sent | both
+  peopleSort: 'default',  // default | name_asc | name_desc | amount_asc | amount_desc
   statsScope: 'year',     // 'year' | 'all'
   statsDir: 'sent',       // 'sent' | 'received'
   formType: '경사',
@@ -655,6 +660,7 @@ function toggleHomeSearch() {
 
 function setHomeFilter(f) { ui.homeFilter = f; ui.homeYear = 'all'; renderHome(); }
 function setHomeYear(y) { ui.homeYear = y; renderHome(); }
+function setHomeSort(v) { ui.homeSort = v; renderHome(); }
 
 function renderHome() {
   const thisYear = new Date().getFullYear();
@@ -715,17 +721,39 @@ function renderHome() {
     `<button class="chip${ui.homeFilter === c.k ? ' active' : ''}" onclick="setHomeFilter('${c.k}')">${c.l}</button>`
   ).join('');
 
+  const homeSortOpts = [
+    { k: 'date', l: '최신순' },
+    { k: 'name_asc', l: '이름 오름차순' },
+    { k: 'name_desc', l: '이름 내림차순' },
+    { k: 'amount_desc', l: '금액 높은순' },
+    { k: 'amount_asc', l: '금액 낮은순' },
+  ];
+  document.getElementById('home-sort-wrap').innerHTML =
+    `<select class="sort-sel" onchange="setHomeSort(this.value)">${homeSortOpts.map(o =>
+      `<option value="${o.k}"${ui.homeSort === o.k ? ' selected' : ''}>${o.l}</option>`
+    ).join('')}</select>`;
+
   const q = (document.getElementById('home-search').value || '').trim().toLowerCase();
   let list = entries.slice();
   if (ui.homeFilter === 'sent') list = list.filter(e => e.direction === '보냄');
   else if (ui.homeFilter === 'received') list = list.filter(e => e.direction === '받음');
   if (ui.homeFilter !== 'all' && ui.homeYear !== 'all') list = list.filter(e => String(yearOf(e.date)) === ui.homeYear);
   if (q) list = list.filter(e => (e.name + ' ' + e.item + ' ' + (e.memo || '')).toLowerCase().includes(q));
-  list.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+  if (ui.homeSort === 'name_asc') list.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+  else if (ui.homeSort === 'name_desc') list.sort((a, b) => b.name.localeCompare(a.name, 'ko'));
+  else if (ui.homeSort === 'amount_asc') list.sort((a, b) => a.amount - b.amount);
+  else if (ui.homeSort === 'amount_desc') list.sort((a, b) => b.amount - a.amount);
+  else list.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
   const wrap = document.getElementById('home-list');
   if (!list.length) {
     wrap.innerHTML = `<div class="empty"><span>📭</span><p>등록된 경조사비 기록이 없습니다.<br>아래 + 버튼으로 추가해 보세요.</p></div>`;
+    return;
+  }
+
+  if (ui.homeSort !== 'date') {
+    wrap.innerHTML = `<div class="month-card">${list.map(e => rowHtml(e)).join('')}</div>`;
     return;
   }
 
@@ -779,6 +807,7 @@ function rowHtml(e) {
 // ================================================================
 function setPeopleRel(r) { ui.peopleRel = r; renderPeople(); }
 function setPeopleDir(d) { ui.peopleDir = d; renderPeople(); }
+function setPeopleSort(v) { ui.peopleSort = v; renderPeople(); }
 
 function aggregatePeople() {
   const map = {};
@@ -819,12 +848,29 @@ function renderPeople() {
     `<button class="chip${ui.peopleDir === c.k ? ' active' : ''}" onclick="setPeopleDir('${c.k}')">${c.l}</button>`
   ).join('');
 
+  const peopleSortOpts = [
+    { k: 'default', l: '기본순' },
+    { k: 'name_asc', l: '이름 오름차순' },
+    { k: 'name_desc', l: '이름 내림차순' },
+    { k: 'amount_desc', l: '금액 높은순' },
+    { k: 'amount_asc', l: '금액 낮은순' },
+  ];
+  document.getElementById('people-sort-wrap').innerHTML =
+    `<select class="sort-sel" onchange="setPeopleSort(this.value)">${peopleSortOpts.map(o =>
+      `<option value="${o.k}"${ui.peopleSort === o.k ? ' selected' : ''}>${o.l}</option>`
+    ).join('')}</select>`;
+
   const q = (document.getElementById('people-search').value || '').trim().toLowerCase();
   let list = people;
   if (ui.peopleRel !== 'all') list = list.filter(p => p.relation === ui.peopleRel);
   if (ui.peopleDir !== 'all') list = list.filter(p => p.dir === ui.peopleDir);
   if (q) list = list.filter(p => (p.name + ' ' + (p.relation || '')).toLowerCase().includes(q));
-  list.sort((a, b) => Math.abs(b.sent - b.received) - Math.abs(a.sent - a.received));
+
+  if (ui.peopleSort === 'name_asc') list.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+  else if (ui.peopleSort === 'name_desc') list.sort((a, b) => b.name.localeCompare(a.name, 'ko'));
+  else if (ui.peopleSort === 'amount_desc') list.sort((a, b) => (b.received - b.sent) - (a.received - a.sent));
+  else if (ui.peopleSort === 'amount_asc') list.sort((a, b) => (a.received - a.sent) - (b.received - b.sent));
+  else list.sort((a, b) => Math.abs(b.sent - b.received) - Math.abs(a.sent - a.received));
 
   const wrap = document.getElementById('people-list');
   if (!list.length) {

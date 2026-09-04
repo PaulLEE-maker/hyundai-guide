@@ -7,7 +7,7 @@
 // 그래서 절대 캐시되지 않는 별도의 작은 버전 파일을 매번 직접 확인해서,
 // 버전이 다르면 (캐시를 무조건 우회하는) 새 주소로 강제 이동시킨다.
 (function () {
-  var CURRENT_VERSION = 3;
+  var CURRENT_VERSION = 4;
   try {
     if (sessionStorage.getItem('vcheck_done')) return; // 한 세션에 한 번만 시도 (무한 새로고침 방지)
     fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
@@ -1481,13 +1481,13 @@ function toast(msg) {
 window.cloudSync.onAuthChange(() => { if (ui.tab === 'settings') renderSettings(); });
 
 document.addEventListener('focusin', e => {
-  if (e.target.matches('input, textarea, select')) {
+  if (e.target.matches('input, textarea')) {
     const nav = document.querySelector('.bottomnav');
     if (nav) nav.classList.add('kb-hide');
   }
 });
 document.addEventListener('focusout', e => {
-  if (e.target.matches('input, textarea, select')) {
+  if (e.target.matches('input, textarea')) {
     const nav = document.querySelector('.bottomnav');
     if (nav) nav.classList.remove('kb-hide');
   }

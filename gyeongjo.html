@@ -792,6 +792,7 @@ function renderPeople() {
         <div class="p-right">
           <div class="p-net mono" style="color:${netColor}">${netTxt}</div>
           <span class="p-tag" style="background:${tagBg};color:${tagColor}">${tagLabel}</span>
+          ${net > 0 ? `<button type="button" class="btn-reply" style="margin-top:6px" onclick="event.stopPropagation(); openReplyModalForName('${esc(p.name)}')">보답하기</button>` : ''}
         </div>
       </div>
       <div class="p-bar"><div style="width:${sentPct}%;background:var(--red)"></div><div style="width:${100 - sentPct}%;background:var(--navy)"></div></div>
@@ -978,6 +979,13 @@ function resetAll() {
     : '모든 경조사비 기록을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.';
   if (!confirm(msg)) return;
   persistDeleteMany(entries.map(e => e.id));
+}
+
+function openReplyModalForName(name) {
+  const recv = entries
+    .filter(e => e.name === name && e.direction === '받음')
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
+  if (recv) openReplyModal(recv.id);
 }
 
 function openReplyModal(id) {

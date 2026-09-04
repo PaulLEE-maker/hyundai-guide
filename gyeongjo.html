@@ -94,11 +94,16 @@ input,textarea{font-family:inherit}
 
 /* ---- '기억할 경조일정' rows inside the 기록 추가/수정 폼 ---- */
 .psched-rows{display:flex;flex-direction:column;gap:10px}
+.psched-item{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--bg);border-radius:16px}
+.psched-item .finp{background:#fff}
 .psched-row{display:flex;gap:8px;align-items:center}
-.psched-row .finp{flex:1;height:44px;padding:0 12px;line-height:41px}
-.psched-row input[type=date]{flex:0 0 118px;min-width:0;height:44px;padding:0 8px;line-height:41px;font-size:12.5px}
-.psched-remove{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);color:var(--muted3);font-size:13px}
+.psched-item input[type=date]{flex:1;min-width:0;height:44px;padding:0 8px;line-height:41px;font-size:12.5px}
+.psched-item .psched-amt{flex:1;min-width:0;height:44px;padding:0 10px;line-height:41px;font-size:13px}
+.psched-item > .finp{height:44px;padding:0 12px;line-height:41px;font-size:13px}
+.psched-remove{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:none;background:#fff;color:var(--muted3);font-size:13px}
 .psched-add{margin-top:2px;background:none;border:1.5px dashed var(--bdr);border-radius:12px;padding:10px;color:var(--muted3);font:500 12.5px 'NanumSquare',sans-serif;width:100%}
+.cal-month-total{margin:0 20px 10px;padding:10px 14px;background:var(--navy-tint2);border-radius:14px;display:flex;align-items:center;justify-content:space-between;font:500 12.5px 'NanumSquare',sans-serif;color:var(--navy)}
+.cal-month-total .v{font:700 14px 'NanumSquare',sans-serif;font-variant-numeric:tabular-nums}
 
 
 
@@ -378,6 +383,7 @@ input,textarea{font-family:inherit}
           <span class="lbl" id="cal-label"></span>
           <button onclick="calShift(1)">›</button>
         </div>
+        <div class="cal-month-total" id="cal-month-total"></div>
         <div class="cal-weekdays"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
         <div class="cal-grid" id="cal-grid"></div>
         <div class="cal-day-list" id="cal-day-list"></div>
@@ -505,6 +511,12 @@ function persistScheduleSetForEntry(entryId, items) {
   });
   save();
   render();
+}
+
+function clearPlannedAmount(name) {
+  let changed = false;
+  schedules.forEach(s => { if (s.name === name && s.amount) { s.amount = 0; changed = true; } });
+  if (changed) { save(); render(); }
 }
 
 function clearSampleData() {
@@ -991,8 +1003,8 @@ function openAddModal(id) {
 
   const existingSched = id ? schedules.filter(s => s.entryId === id) : [];
   pschedRows = existingSched.length
-    ? existingSched.map(s => ({ key: ++pschedKeySeq, date: s.date, memo: s.memo || '' }))
-    : [{ key: ++pschedKeySeq, date: '', memo: '' }];
+    ? existingSched.map(s => ({ key: ++pschedKeySeq, date: s.date, memo: s.memo || '', amount: s.amount || 0 }))
+    : [{ key: ++pschedKeySeq, date: '', memo: '', amount: 0 }];
   renderPschedRows();
 
   document.getElementById('add-modal').classList.add('open');
@@ -1069,8 +1081,10 @@ function saveEntry() {
 
   const entryId = persistUpsert(ui.editingId, data);
 
-  const schedItems = pschedRows.filter(r => r.date).map(r => ({ name, relation, date: r.date, memo: r.memo.trim() }));
+  const schedItems = pschedRows.filter(r => r.date).map(r => ({ name, relation, date: r.date, memo: r.memo.trim(), amount: r.amount || 0 }));
   persistScheduleSetForEntry(entryId, schedItems);
+
+  if (data.direction === '보냄') clearPlannedAmount(name);
 
   closeAddModal();
 }
@@ -1166,6 +1180,13 @@ function renderCalendar() {
   const byDate = {};
   schedules.forEach(s => { (byDate[s.date] = byDate[s.date] || []).push(s); });
 
+  const monthPrefix = `${y}-${String(m + 1).padStart(2, '0')}`;
+  const monthTotal = schedules
+    .filter(s => s.date && s.date.startsWith(monthPrefix))
+    .reduce((sum, s) => sum + (s.amount || 0), 0);
+  document.getElementById('cal-month-total').innerHTML =
+    `<span>${m + 1}월 보낼 예정금액</span><span class="v">${won(monthTotal)}원</span>`;
+
   const first = new Date(y, m, 1);
   const startDow = first.getDay();
   const daysInMonth = new Date(y, m + 1, 0).getDate();
@@ -1194,7 +1215,7 @@ function renderCalendar() {
     return `<div class="sch-card">
       <div class="dday" style="background:${c.bg};color:${c.fg}">${ddayLabel(dayDiff(s.date))}</div>
       <div class="body">
-        <div class="name">${esc(s.name)}</div>
+        <div class="name">${esc(s.name)}${s.amount ? ` · 예정 ${won(s.amount)}원` : ''}</div>
         <div class="meta">${esc([s.relation, s.memo].filter(Boolean).join(' · '))}</div>
       </div>
     </div>`;
@@ -1207,18 +1228,26 @@ let pschedKeySeq = 0;
 
 function renderPschedRows() {
   document.getElementById('psched-rows').innerHTML = pschedRows.map(r => `
-    <div class="psched-row">
-      <input class="finp" type="date" value="${r.date}" onchange="updatePschedRow(${r.key}, 'date', this.value)">
+    <div class="psched-item">
+      <div class="psched-row">
+        <input class="finp" type="date" value="${r.date}" onchange="updatePschedRow(${r.key}, 'date', this.value)">
+        <input class="finp psched-amt" inputmode="numeric" placeholder="보낼 예정금액" value="${r.amount ? won(r.amount) : ''}" oninput="onPschedAmountInput(${r.key}, this)">
+        ${pschedRows.length > 1 ? `<button type="button" class="psched-remove" onclick="removePschedRow(${r.key})">✕</button>` : ''}
+      </div>
       <input class="finp" placeholder="무슨 일정인가요? (예: 결혼식)" value="${escapeHtml(r.memo)}" oninput="updatePschedRow(${r.key}, 'memo', this.value)">
-      ${pschedRows.length > 1 ? `<button type="button" class="psched-remove" onclick="removePschedRow(${r.key})">✕</button>` : ''}
     </div>`).join('');
 }
 function updatePschedRow(key, field, value) {
   const row = pschedRows.find(r => r.key === key);
   if (row) row[field] = value;
 }
+function onPschedAmountInput(key, el) {
+  const digits = el.value.replace(/[^0-9]/g, '');
+  el.value = digits ? won(Number(digits)) : '';
+  updatePschedRow(key, 'amount', digits ? Number(digits) : 0);
+}
 function addPschedRow() {
-  pschedRows.push({ key: ++pschedKeySeq, date: '', memo: '' });
+  pschedRows.push({ key: ++pschedKeySeq, date: '', memo: '', amount: 0 });
   renderPschedRows();
 }
 function removePschedRow(key) {

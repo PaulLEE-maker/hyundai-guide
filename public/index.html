@@ -33,7 +33,8 @@ input,textarea{font-family:inherit}
 .hd{display:flex;justify-content:space-between;align-items:center;padding:20px 18px 12px;cursor:pointer}
 .hd-title{font:600 19px 'NanumSquare',sans-serif;color:var(--ink)}
 .hd-icons{display:flex;gap:8px}
-.icon-btn{width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(16,20,24,.10);border:none;display:flex;align-items:center;justify-content:center;color:var(--muted3);font-size:18px}
+.icon-btn{width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(16,20,24,.10);border:none;display:flex;align-items:center;justify-content:center;color:var(--muted3);font-size:18px;position:relative}
+.icon-btn .dot{position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 3px;border-radius:8px;background:var(--red);color:#fff;font:600 9.5px 'NanumSquare',sans-serif;display:flex;align-items:center;justify-content:center}
 .search-wrap{padding:0 18px 10px}
 .search-box{display:flex;align-items:center;gap:8px;background:#fff;border-radius:14px;padding:10px 14px;box-shadow:0 1px 3px rgba(16,20,24,.08)}
 .search-box input{border:none;outline:none;flex:1;font-size:13px;background:transparent;color:var(--ink)}
@@ -59,6 +60,23 @@ input,textarea{font-family:inherit}
 
 .sample-banner{margin:14px 18px 0;background:var(--red-tint);color:var(--red);border-radius:14px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font:400 12px 'NanumSquare',sans-serif}
 .sample-banner button{background:none;border:none;color:var(--red);font:600 12px 'NanumSquare',sans-serif;flex-shrink:0;white-space:nowrap}
+
+.sch-banner{margin:14px 18px 0;background:var(--navy);color:#fff;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.sch-banner .dday{flex-shrink:0;background:rgba(255,255,255,.18);border-radius:10px;padding:6px 10px;font:700 12px 'NanumSquare',sans-serif;text-align:center}
+.sch-banner .txt{flex:1;min-width:0}
+.sch-banner .txt .t1{font:600 13.5px 'NanumSquare',sans-serif}
+.sch-banner .txt .t2{font:400 11.5px 'NanumSquare',sans-serif;color:rgba(255,255,255,.75);margin-top:2px}
+.sch-banner .more{flex-shrink:0;font:400 11px 'NanumSquare',sans-serif;color:rgba(255,255,255,.75)}
+
+.sch-list{padding:0 20px 4px;display:flex;flex-direction:column;gap:10px}
+.sch-card{background:var(--bg);border-radius:16px;padding:14px 15px;display:flex;gap:12px;align-items:flex-start}
+.sch-card .dday{flex-shrink:0;border-radius:10px;padding:6px 9px;font:700 11.5px 'NanumSquare',sans-serif;text-align:center;min-width:44px}
+.sch-card .body{flex:1;min-width:0;cursor:pointer}
+.sch-card .name{font:600 14.5px 'NanumSquare',sans-serif;color:var(--ink)}
+.sch-card .meta{font:400 11.5px 'NanumSquare',sans-serif;color:var(--muted2);margin-top:2px}
+.sch-card .memo{font:400 11.5px 'NanumSquare',sans-serif;color:var(--muted3);margin-top:4px}
+.sch-card .conv{flex-shrink:0;background:#fff;border:1.5px solid var(--bdr);border-radius:10px;padding:7px 10px;font:500 11px 'NanumSquare',sans-serif;color:var(--ink);white-space:nowrap}
+.sch-name-wrap{position:relative}
 
 
 
@@ -189,6 +207,7 @@ input,textarea{font-family:inherit}
     <div class="hd" onclick="scrollActiveToTop(event)">
       <div class="hd-title">경조사비</div>
       <div class="hd-icons">
+        <button class="icon-btn" onclick="openScheduleModal()">🔔<span class="dot" id="sch-badge-dot" style="display:none">0</span></button>
         <button class="icon-btn" onclick="toggleHomeSearch()">⌕</button>
       </div>
     </div>
@@ -197,6 +216,7 @@ input,textarea{font-family:inherit}
     </div>
 
     <div class="summary" id="home-summary"></div>
+    <div id="sch-banner-wrap"></div>
     <div id="sample-banner-wrap"></div>
     <div class="chips" id="home-chips"></div>
     <div class="list-wrap" id="home-list"></div>
@@ -311,6 +331,83 @@ input,textarea{font-family:inherit}
     </div>
   </div>
 
+  <!-- ===== SCHEDULE LIST MODAL ===== -->
+  <div class="modal" id="schedule-modal">
+    <div class="sheet">
+      <div class="sheet-hd">
+        <span class="cancel" onclick="closeScheduleModal()">닫기</span>
+        <span class="title">경조사 일정</span>
+        <span class="save" onclick="openScheduleForm()">+ 추가</span>
+      </div>
+      <div class="sheet-body" style="padding:4px 0 24px">
+        <div class="sch-list" id="schedule-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCHEDULE ADD/EDIT MODAL ===== -->
+  <div class="modal" id="schedule-form-modal">
+    <div class="sheet">
+      <div class="sheet-hd">
+        <span class="cancel" onclick="closeScheduleForm()">취소</span>
+        <span class="title" id="sch-sheet-title">일정 추가</span>
+        <span class="save" onclick="saveSchedule()">저장</span>
+      </div>
+      <div class="sheet-body">
+
+        <div class="frow2">
+          <div class="sch-name-wrap">
+            <div class="field-lbl">이름</div>
+            <input class="finp" id="sch-name" list="sch-name-options" placeholder="이름 검색 또는 입력" oninput="onSchNameInput()">
+            <datalist id="sch-name-options"></datalist>
+          </div>
+          <div>
+            <div class="field-lbl">관계</div>
+            <select class="finp" id="sch-relation">
+              <option value="가족">가족</option>
+              <option value="친구">친구</option>
+              <option value="직장">직장</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <div class="toggle2" id="sch-type-toggle"></div>
+          <div class="item-chips" id="sch-item-chips"></div>
+          <div class="finp" id="sch-item-custom-wrap" style="display:none;margin-top:8px;padding:0">
+            <input class="finp" id="sch-item-custom" placeholder="항목 직접입력">
+          </div>
+        </div>
+
+        <div>
+          <div class="field-lbl">보낼 예정 / 받을 예정</div>
+          <div class="toggle2" id="sch-dir-toggle"></div>
+        </div>
+
+        <div class="frow2">
+          <div>
+            <div class="field-lbl">날짜</div>
+            <input class="finp" type="date" id="sch-date">
+          </div>
+          <div>
+            <div class="field-lbl">예상 금액 (선택)</div>
+            <input class="finp" id="sch-amount" inputmode="numeric" placeholder="0" oninput="onSchAmountInput()">
+          </div>
+        </div>
+
+        <div>
+          <div class="field-lbl">메모</div>
+          <textarea class="ftextarea" id="sch-memo" placeholder="메모 (선택)"></textarea>
+        </div>
+
+      </div>
+      <div class="sheet-foot">
+        <button class="btn-del" id="sch-del-btn" style="display:none" onclick="deleteScheduleFromForm()">이 일정 삭제</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -344,6 +441,7 @@ const INITIAL_ENTRIES = [
 ];
 
 let entries = [];
+let schedules = [];
 let updatedAt = 0;
 
 let ui = {
@@ -358,7 +456,12 @@ let ui = {
   formType: '경사',
   formItem: '결혼',
   formDirection: '보냄',
-  editingId: null
+  editingId: null,
+  schType: '경사',
+  schItem: '결혼',
+  schDirection: '보냄',
+  schEditingId: null,
+  convertingScheduleId: null
 };
 
 // ================================================================
@@ -374,19 +477,21 @@ function load() {
     const parsed = raw ? JSON.parse(raw) : null;
     if (parsed && Array.isArray(parsed.entries)) {
       entries = parsed.entries;
+      schedules = Array.isArray(parsed.schedules) ? parsed.schedules : [];
       updatedAt = parsed.updatedAt || 0;
     } else {
       // first-ever visit: seed with example entries so the app isn't a blank shell
       entries = INITIAL_ENTRIES.map(e => ({ ...e }));
+      schedules = [];
       updatedAt = Date.now();
       persistLocal();
     }
-  } catch (e) { entries = []; updatedAt = 0; }
+  } catch (e) { entries = []; schedules = []; updatedAt = 0; }
   render();
 }
 
 function persistLocal() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ entries, updatedAt })); }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ entries, schedules, updatedAt })); }
   catch (e) { toast('저장에 실패했어요'); }
 }
 
@@ -413,18 +518,36 @@ function persistDeleteMany(ids) {
   render();
 }
 
+function persistScheduleUpsert(id, data) {
+  if (id) {
+    const idx = schedules.findIndex(s => s.id === id);
+    if (idx > -1) schedules[idx] = { id, ...data };
+  } else {
+    schedules.push({ id: 'sc' + Date.now() + Math.random().toString(36).slice(2, 7), ...data });
+  }
+  save();
+  render();
+}
+
+function persistScheduleDelete(id) {
+  schedules = schedules.filter(s => s.id !== id);
+  save();
+  render();
+}
+
 function clearSampleData() {
   persistDeleteMany(entries.filter(e => e.sample).map(e => e.id));
 }
 
-function render() { renderCurrentTab(); }
+function render() { renderCurrentTab(); renderScheduleBanner(); }
 
 // ── 동기화 모듈이 호출하는 인터페이스 ────────────────────────
 window.__gyeongjoApp = {
-  getData: () => ({ entries, updatedAt }),
+  getData: () => ({ entries, schedules, updatedAt }),
   getUpdatedAt: () => updatedAt,
   setData: (newData, ts) => {
     entries = (newData && newData.entries) || [];
+    schedules = (newData && newData.schedules) || [];
     updatedAt = ts || Date.now();
     persistLocal();
     render();
@@ -855,9 +978,9 @@ function resetAll() {
 // ================================================================
 // ADD / EDIT MODAL
 // ================================================================
-function openAddModal(id) {
+function openAddModal(id, prefill) {
   ui.editingId = id || null;
-  const e = id ? entries.find(x => x.id === id) : null;
+  const e = id ? entries.find(x => x.id === id) : prefill;
 
   ui.formType = e ? e.type : '경사';
   ui.formDirection = e ? e.direction : '보냄';
@@ -868,8 +991,8 @@ function openAddModal(id) {
   document.getElementById('form-del-btn').style.display = id ? 'block' : 'none';
   document.getElementById('form-name').value = e ? e.name : '';
   document.getElementById('form-relation').value = e ? (e.relation || '기타') : '기타';
-  document.getElementById('form-amount').value = e ? won(e.amount) : '';
-  document.getElementById('form-date').value = e ? e.date : todayStr();
+  document.getElementById('form-amount').value = (e && e.amount) ? won(e.amount) : '';
+  document.getElementById('form-date').value = (e && e.date) ? e.date : todayStr();
   document.getElementById('form-memo').value = e ? (e.memo || '') : '';
   document.getElementById('form-item-custom').value = (e && ui.formItem === '직접입력') ? e.item : '';
 
@@ -884,6 +1007,7 @@ function openAddModal(id) {
 function closeAddModal() {
   document.getElementById('add-modal').classList.remove('open');
   ui.editingId = null;
+  ui.convertingScheduleId = null;
 }
 
 function renderFormType() {
@@ -944,9 +1068,12 @@ function saveEntry() {
   if (!amount) { alert('금액을 입력해 주세요.'); return; }
 
   const data = { type: ui.formType, item, direction: ui.formDirection, name, relation, amount, date, memo };
+  const convertingId = ui.convertingScheduleId;
 
   persistUpsert(ui.editingId, data);
   closeAddModal();
+
+  if (convertingId) persistScheduleDelete(convertingId);
 }
 
 function deleteFromModal() {
@@ -957,6 +1084,199 @@ function deleteFromModal() {
 }
 
 document.getElementById('add-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeAddModal(); });
+
+// ================================================================
+// SCHEDULES (경조사 일정 리마인더) — separate from actual money
+// records: register an upcoming event for someone so the app can
+// surface a reminder before/after the date, then convert it into a
+// real 기록 once the money is actually sent or received.
+// ================================================================
+function dayDiff(dateStr) {
+  if (!dateStr) return 0;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const target = new Date(y, m - 1, d);
+  return Math.round((target - today) / 86400000);
+}
+function ddayLabel(diff) {
+  if (diff === 0) return 'D-DAY';
+  return diff > 0 ? ('D-' + diff) : ('D+' + Math.abs(diff));
+}
+function ddayColor(diff) {
+  if (diff <= 0) return { bg: 'var(--red-tint2)', fg: 'var(--red)' };
+  if (diff <= 7) return { bg: 'var(--red-tint2)', fg: 'var(--red)' };
+  return { bg: 'var(--navy-tint2)', fg: 'var(--navy)' };
+}
+
+function renderScheduleBanner() {
+  const dot = document.getElementById('sch-badge-dot');
+  const wrap = document.getElementById('sch-banner-wrap');
+  if (!dot || !wrap) return;
+
+  const urgent = schedules.filter(s => dayDiff(s.date) <= 7).sort((a, b) => dayDiff(a.date) - dayDiff(b.date));
+  if (urgent.length) {
+    dot.style.display = 'flex';
+    dot.textContent = urgent.length > 9 ? '9+' : String(urgent.length);
+  } else {
+    dot.style.display = 'none';
+  }
+
+  if (!urgent.length) { wrap.innerHTML = ''; return; }
+  const top = urgent[0];
+  const dirLabel = top.direction === '보냄' ? '보낼 예정' : '받을 예정';
+  const moreTxt = urgent.length > 1 ? `외 ${urgent.length - 1}건` : '';
+  wrap.innerHTML = `
+    <div class="sch-banner" onclick="openScheduleModal()">
+      <div class="dday">${ddayLabel(dayDiff(top.date))}</div>
+      <div class="txt">
+        <div class="t1">${esc(top.name)} · ${esc(top.item)} (${dirLabel})</div>
+        <div class="t2">${dateShort(top.date)} ${moreTxt}</div>
+      </div>
+      <div class="more">전체보기 ›</div>
+    </div>`;
+}
+
+function openScheduleModal() {
+  renderScheduleList();
+  document.getElementById('schedule-modal').classList.add('open');
+}
+function closeScheduleModal() {
+  document.getElementById('schedule-modal').classList.remove('open');
+}
+document.getElementById('schedule-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeScheduleModal(); });
+
+function renderScheduleList() {
+  const wrap = document.getElementById('schedule-list');
+  const list = schedules.slice().sort((a, b) => dayDiff(a.date) - dayDiff(b.date));
+  if (!list.length) {
+    wrap.innerHTML = `<div class="empty"><span>🔔</span><p>등록된 일정이 없습니다.<br>위 + 추가 버튼으로 등록해 보세요.</p></div>`;
+    return;
+  }
+  wrap.innerHTML = list.map(s => {
+    const diff = dayDiff(s.date);
+    const c = ddayColor(diff);
+    const dirLabel = s.direction === '보냄' ? '보낼 예정' : '받을 예정';
+    const subParts = [s.relation, s.item, dirLabel, dateShort(s.date)].filter(Boolean);
+    return `<div class="sch-card">
+      <div class="dday" style="background:${c.bg};color:${c.fg}">${ddayLabel(diff)}</div>
+      <div class="body" onclick="openScheduleForm('${s.id}')">
+        <div class="name">${esc(s.name)}</div>
+        <div class="meta">${esc(subParts.join(' · '))}</div>
+        ${s.memo ? `<div class="memo">${esc(s.memo)}</div>` : ''}
+      </div>
+      <button class="conv" onclick="convertScheduleToEntry('${s.id}')">기록으로</button>
+    </div>`;
+  }).join('');
+}
+
+function openScheduleForm(id) {
+  ui.schEditingId = id || null;
+  const s = id ? schedules.find(x => x.id === id) : null;
+
+  ui.schType = s ? s.type : '경사';
+  ui.schDirection = s ? s.direction : '보냄';
+  const preset = ITEM_PRESETS[ui.schType];
+  ui.schItem = s ? (preset.includes(s.item) ? s.item : '직접입력') : preset[0];
+
+  document.getElementById('sch-sheet-title').textContent = id ? '일정 수정' : '일정 추가';
+  document.getElementById('sch-del-btn').style.display = id ? 'block' : 'none';
+  document.getElementById('sch-name').value = s ? s.name : '';
+  document.getElementById('sch-relation').value = s ? (s.relation || '기타') : '기타';
+  document.getElementById('sch-date').value = s ? s.date : '';
+  document.getElementById('sch-amount').value = (s && s.amount) ? won(s.amount) : '';
+  document.getElementById('sch-memo').value = s ? (s.memo || '') : '';
+  document.getElementById('sch-item-custom').value = (s && ui.schItem === '직접입력') ? s.item : '';
+
+  renderSchNameOptions();
+  renderSchType();
+  renderSchItems();
+  renderSchDirection();
+
+  document.getElementById('schedule-form-modal').classList.add('open');
+}
+function closeScheduleForm() {
+  document.getElementById('schedule-form-modal').classList.remove('open');
+  ui.schEditingId = null;
+}
+document.getElementById('schedule-form-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeScheduleForm(); });
+
+function renderSchNameOptions() {
+  const names = new Set();
+  aggregatePeople().forEach(p => names.add(p.name));
+  schedules.forEach(s => names.add(s.name));
+  document.getElementById('sch-name-options').innerHTML =
+    [...names].map(n => `<option value="${escapeHtml(n)}">`).join('');
+}
+function onSchNameInput() {
+  const name = document.getElementById('sch-name').value.trim();
+  const person = aggregatePeople().find(p => p.name === name);
+  if (person) document.getElementById('sch-relation').value = person.relation || '기타';
+}
+function onSchAmountInput() {
+  const el = document.getElementById('sch-amount');
+  const digits = el.value.replace(/[^0-9]/g, '');
+  el.value = digits ? won(Number(digits)) : '';
+}
+
+function renderSchType() {
+  document.getElementById('sch-type-toggle').innerHTML = ['경사', '조사'].map(t =>
+    `<button class="opt${ui.schType === t ? ' active' : ''}" onclick="selectSchType('${t}')">${t}</button>`
+  ).join('');
+}
+function selectSchType(t) {
+  ui.schType = t;
+  ui.schItem = ITEM_PRESETS[t][0];
+  renderSchType(); renderSchItems();
+}
+function renderSchItems() {
+  const preset = ITEM_PRESETS[ui.schType].concat(['직접입력']);
+  document.getElementById('sch-item-chips').innerHTML = preset.map(i =>
+    `<button class="item-chip${ui.schItem === i ? ' active' : ''}" onclick="selectSchItem('${esc(i)}')">${i}</button>`
+  ).join('');
+  document.getElementById('sch-item-custom-wrap').style.display = ui.schItem === '직접입력' ? 'block' : 'none';
+}
+function selectSchItem(i) { ui.schItem = i; renderSchItems(); }
+function renderSchDirection() {
+  document.getElementById('sch-dir-toggle').innerHTML = ['보냄', '받음'].map(d =>
+    `<button class="opt dir-${d}${ui.schDirection === d ? ' active' : ''}" onclick="selectSchDirection('${d}')">${d === '보냄' ? '보낼 예정' : '받을 예정'}</button>`
+  ).join('');
+}
+function selectSchDirection(d) { ui.schDirection = d; renderSchDirection(); }
+
+function saveSchedule() {
+  const item = ui.schItem === '직접입력' ? document.getElementById('sch-item-custom').value.trim() : ui.schItem;
+  const name = document.getElementById('sch-name').value.trim();
+  const date = document.getElementById('sch-date').value;
+  const relation = document.getElementById('sch-relation').value;
+  const amount = Number((document.getElementById('sch-amount').value || '').replace(/[^0-9]/g, '')) || 0;
+  const memo = document.getElementById('sch-memo').value.trim();
+
+  if (!name) { alert('이름을 입력해 주세요.'); return; }
+  if (!item) { alert('경조사 항목을 입력해 주세요.'); return; }
+  if (!date) { alert('날짜를 선택해 주세요.'); return; }
+
+  const data = { type: ui.schType, item, direction: ui.schDirection, name, relation, amount, date, memo };
+  persistScheduleUpsert(ui.schEditingId, data);
+  closeScheduleForm();
+  renderScheduleList();
+  toast('일정을 저장했어요');
+}
+
+function deleteScheduleFromForm() {
+  if (!ui.schEditingId) return;
+  if (!confirm('이 일정을 삭제하시겠습니까?')) return;
+  persistScheduleDelete(ui.schEditingId);
+  closeScheduleForm();
+  renderScheduleList();
+}
+
+function convertScheduleToEntry(id) {
+  const s = schedules.find(x => x.id === id);
+  if (!s) return;
+  ui.convertingScheduleId = id;
+  closeScheduleModal();
+  openAddModal(null, s);
+}
 
 // ================================================================
 // TOAST

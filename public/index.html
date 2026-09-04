@@ -117,6 +117,8 @@ input,textarea{font-family:inherit}
 .r-name{font:500 14.5px/1.3 'NanumSquare',sans-serif;color:var(--ink)}
 .r-sub{font:400 11.5px/1.4 'NanumSquare',sans-serif;color:var(--muted2);margin-top:2px}
 .r-amt{font:600 15px 'NanumSquare',sans-serif;white-space:nowrap;font-variant-numeric:tabular-nums}
+.r-amt-col{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.btn-reply{border:none;background:var(--red-tint2);color:var(--red);font:600 10.5px 'NanumSquare',sans-serif;padding:4px 9px;border-radius:10px;white-space:nowrap}
 .empty{text-align:center;padding:60px 24px;color:var(--muted)}
 .empty span{font-size:38px;display:block;margin-bottom:10px}
 .empty p{font-size:13px;line-height:1.6}
@@ -708,7 +710,10 @@ function rowHtml(e) {
   return `<div class="row" onclick="openAddModal('${e.id}')">
     <div class="badge" style="background:${badgeBg};color:${badgeColor}">${esc(badgeLabel)}</div>
     <div><div class="r-name">${esc(e.name)}</div><div class="r-sub">${esc(subParts.filter(Boolean).join(' · '))}</div></div>
-    <div class="r-amt mono" style="color:${amtColor}">${amtTxt}</div>
+    <div class="r-amt-col">
+      <div class="r-amt mono" style="color:${amtColor}">${amtTxt}</div>
+      ${isReceived ? `<button type="button" class="btn-reply" onclick="event.stopPropagation(); openReplyModal('${e.id}')">보답하기</button>` : ''}
+    </div>
   </div>`;
 }
 
@@ -975,26 +980,40 @@ function resetAll() {
   persistDeleteMany(entries.map(e => e.id));
 }
 
+function openReplyModal(id) {
+  const e = entries.find(x => x.id === id);
+  if (!e) return;
+  openAddModal(null, {
+    type: e.type,
+    item: e.item,
+    direction: '보냄',
+    name: e.name,
+    relation: e.relation,
+    amount: e.amount
+  });
+}
+
 // ================================================================
 // ADD / EDIT MODAL
 // ================================================================
-function openAddModal(id) {
+function openAddModal(id, prefill) {
   ui.editingId = id || null;
   const e = id ? entries.find(x => x.id === id) : null;
+  const p = (!id && prefill) ? prefill : null;
 
-  ui.formType = e ? e.type : '경사';
-  ui.formDirection = e ? e.direction : '보냄';
+  ui.formType = e ? e.type : (p ? p.type : '경사');
+  ui.formDirection = e ? e.direction : (p ? p.direction : '보냄');
   const preset = ITEM_PRESETS[ui.formType];
-  ui.formItem = e ? (preset.includes(e.item) ? e.item : '직접입력') : preset[0];
+  ui.formItem = e ? (preset.includes(e.item) ? e.item : '직접입력') : (p && preset.includes(p.item) ? p.item : preset[0]);
 
   document.getElementById('sheet-title').textContent = id ? '기록 수정' : '기록 추가';
   document.getElementById('form-del-btn').style.display = id ? 'block' : 'none';
-  document.getElementById('form-name').value = e ? e.name : '';
-  document.getElementById('form-relation').value = e ? (e.relation || '기타') : '기타';
-  document.getElementById('form-amount').value = (e && e.amount) ? won(e.amount) : '';
+  document.getElementById('form-name').value = e ? e.name : (p ? p.name : '');
+  document.getElementById('form-relation').value = e ? (e.relation || '기타') : (p ? (p.relation || '기타') : '기타');
+  document.getElementById('form-amount').value = (e && e.amount) ? won(e.amount) : ((p && p.amount) ? won(p.amount) : '');
   document.getElementById('form-date').value = (e && e.date) ? e.date : todayStr();
   document.getElementById('form-memo').value = e ? (e.memo || '') : '';
-  document.getElementById('form-item-custom').value = (e && ui.formItem === '직접입력') ? e.item : '';
+  document.getElementById('form-item-custom').value = (e && ui.formItem === '직접입력') ? e.item : ((p && ui.formItem === '직접입력') ? p.item : '');
 
   renderFormType();
   renderFormItems();

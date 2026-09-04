@@ -68,15 +68,36 @@ input,textarea{font-family:inherit}
 .sch-banner .txt .t2{font:400 11.5px 'NanumSquare',sans-serif;color:rgba(255,255,255,.75);margin-top:2px}
 .sch-banner .more{flex-shrink:0;font:400 11px 'NanumSquare',sans-serif;color:rgba(255,255,255,.75)}
 
-.sch-list{padding:0 20px 4px;display:flex;flex-direction:column;gap:10px}
-.sch-card{background:var(--bg);border-radius:16px;padding:14px 15px;display:flex;gap:12px;align-items:flex-start}
+.sch-card{background:var(--bg);border-radius:16px;padding:14px 15px;display:flex;gap:12px;align-items:flex-start;margin-bottom:8px}
 .sch-card .dday{flex-shrink:0;border-radius:10px;padding:6px 9px;font:700 11.5px 'NanumSquare',sans-serif;text-align:center;min-width:44px}
-.sch-card .body{flex:1;min-width:0;cursor:pointer}
+.sch-card .body{flex:1;min-width:0}
 .sch-card .name{font:600 14.5px 'NanumSquare',sans-serif;color:var(--ink)}
 .sch-card .meta{font:400 11.5px 'NanumSquare',sans-serif;color:var(--muted2);margin-top:2px}
-.sch-card .memo{font:400 11.5px 'NanumSquare',sans-serif;color:var(--muted3);margin-top:4px}
-.sch-card .conv{flex-shrink:0;background:#fff;border:1.5px solid var(--bdr);border-radius:10px;padding:7px 10px;font:500 11px 'NanumSquare',sans-serif;color:var(--ink);white-space:nowrap}
 .sch-name-wrap{position:relative}
+
+/* ---- schedule calendar ---- */
+.cal-hd{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 12px}
+.cal-hd button{background:var(--bg);border:none;width:30px;height:30px;border-radius:50%;font-size:15px;color:var(--ink)}
+.cal-hd .lbl{font:600 15px 'NanumSquare',sans-serif;color:var(--ink)}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);padding:0 20px;font:500 11px 'NanumSquare',sans-serif;color:var(--muted2);text-align:center;margin-bottom:6px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);padding:0 20px;gap:2px}
+.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:10px;font:400 13px 'NanumSquare',sans-serif;color:var(--ink);cursor:pointer;gap:3px}
+.cal-cell.empty{cursor:default}
+.cal-cell.today .n{font-weight:700;color:var(--navy)}
+.cal-cell.selected{background:var(--ink)}
+.cal-cell.selected .n{color:#fff}
+.cal-cell .dot{width:5px;height:5px;border-radius:50%;background:var(--red)}
+.cal-cell.selected .dot{background:#fff}
+.cal-day-list{padding:16px 20px 4px}
+.cal-day-hdr{font:500 11px 'NanumSquare',sans-serif;color:var(--muted2);margin-bottom:8px}
+
+/* ---- add person schedule (사람 tab +) ---- */
+.psched-rows{display:flex;flex-direction:column;gap:10px}
+.psched-row{display:flex;gap:8px;align-items:center}
+.psched-row .finp{flex:1}
+.psched-row input[type=date]{flex:0 0 132px}
+.psched-remove{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);color:var(--muted3);font-size:13px}
+.psched-add{margin-top:2px;background:none;border:1.5px dashed var(--bdr);border-radius:12px;padding:10px;color:var(--muted3);font:500 12.5px 'NanumSquare',sans-serif;width:100%}
 
 
 
@@ -226,6 +247,9 @@ input,textarea{font-family:inherit}
   <div class="screen" id="screen-people">
     <div class="hd" onclick="scrollActiveToTop(event)">
       <div class="hd-title" id="people-title">사람</div>
+      <div class="hd-icons">
+        <button class="icon-btn" onclick="openPersonScheduleForm()">+</button>
+      </div>
     </div>
     <div class="search-wrap">
       <div class="search-box"><span>⌕</span><input id="people-search" placeholder="이름 또는 관계로 검색" oninput="renderPeople()"></div>
@@ -331,39 +355,46 @@ input,textarea{font-family:inherit}
     </div>
   </div>
 
-  <!-- ===== SCHEDULE LIST MODAL ===== -->
+  <!-- ===== SCHEDULE CALENDAR (열람/알림 전용) ===== -->
   <div class="modal" id="schedule-modal">
     <div class="sheet">
       <div class="sheet-hd">
         <span class="cancel" onclick="closeScheduleModal()">닫기</span>
         <span class="title">경조사 일정</span>
-        <span class="save" onclick="openScheduleForm()">+ 추가</span>
+        <span class="cancel" style="visibility:hidden">닫기</span>
       </div>
       <div class="sheet-body" style="padding:4px 0 24px">
-        <div class="sch-list" id="schedule-list"></div>
+        <div class="cal-hd">
+          <button onclick="calShift(-1)">‹</button>
+          <span class="lbl" id="cal-label"></span>
+          <button onclick="calShift(1)">›</button>
+        </div>
+        <div class="cal-weekdays"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-day-list" id="cal-day-list"></div>
       </div>
     </div>
   </div>
 
-  <!-- ===== SCHEDULE ADD/EDIT MODAL ===== -->
-  <div class="modal" id="schedule-form-modal">
+  <!-- ===== 사람 탭 '+' : 기억할 경조일정 등록 ===== -->
+  <div class="modal" id="person-schedule-modal">
     <div class="sheet">
       <div class="sheet-hd">
-        <span class="cancel" onclick="closeScheduleForm()">취소</span>
-        <span class="title" id="sch-sheet-title">일정 추가</span>
-        <span class="save" onclick="saveSchedule()">저장</span>
+        <span class="cancel" onclick="closePersonScheduleForm()">취소</span>
+        <span class="title">경조일정 등록</span>
+        <span class="save" onclick="savePersonSchedule()">저장</span>
       </div>
       <div class="sheet-body">
 
         <div class="frow2">
           <div class="sch-name-wrap">
             <div class="field-lbl">이름</div>
-            <input class="finp" id="sch-name" list="sch-name-options" placeholder="이름 검색 또는 입력" oninput="onSchNameInput()">
-            <datalist id="sch-name-options"></datalist>
+            <input class="finp" id="psched-name" list="psched-name-options" placeholder="이름 검색 또는 입력" oninput="onPschedNameInput()">
+            <datalist id="psched-name-options"></datalist>
           </div>
           <div>
             <div class="field-lbl">관계</div>
-            <select class="finp" id="sch-relation">
+            <select class="finp" id="psched-relation">
               <option value="가족">가족</option>
               <option value="친구">친구</option>
               <option value="직장">직장</option>
@@ -373,37 +404,11 @@ input,textarea{font-family:inherit}
         </div>
 
         <div>
-          <div class="toggle2" id="sch-type-toggle"></div>
-          <div class="item-chips" id="sch-item-chips"></div>
-          <div class="finp" id="sch-item-custom-wrap" style="display:none;margin-top:8px;padding:0">
-            <input class="finp" id="sch-item-custom" placeholder="항목 직접입력">
-          </div>
+          <div class="field-lbl">기억할 경조일정</div>
+          <div class="psched-rows" id="psched-rows"></div>
+          <button class="psched-add" onclick="addPschedRow()">+ 일정 추가</button>
         </div>
 
-        <div>
-          <div class="field-lbl">보낼 예정 / 받을 예정</div>
-          <div class="toggle2" id="sch-dir-toggle"></div>
-        </div>
-
-        <div class="frow2">
-          <div>
-            <div class="field-lbl">날짜</div>
-            <input class="finp" type="date" id="sch-date">
-          </div>
-          <div>
-            <div class="field-lbl">예상 금액 (선택)</div>
-            <input class="finp" id="sch-amount" inputmode="numeric" placeholder="0" oninput="onSchAmountInput()">
-          </div>
-        </div>
-
-        <div>
-          <div class="field-lbl">메모</div>
-          <textarea class="ftextarea" id="sch-memo" placeholder="메모 (선택)"></textarea>
-        </div>
-
-      </div>
-      <div class="sheet-foot">
-        <button class="btn-del" id="sch-del-btn" style="display:none" onclick="deleteScheduleFromForm()">이 일정 삭제</button>
       </div>
     </div>
   </div>
@@ -457,11 +462,9 @@ let ui = {
   formItem: '결혼',
   formDirection: '보냄',
   editingId: null,
-  schType: '경사',
-  schItem: '결혼',
-  schDirection: '보냄',
-  schEditingId: null,
-  convertingScheduleId: null
+  calYear: new Date().getFullYear(),
+  calMonth: new Date().getMonth(),
+  calSelectedDate: null
 };
 
 // ================================================================
@@ -518,19 +521,10 @@ function persistDeleteMany(ids) {
   render();
 }
 
-function persistScheduleUpsert(id, data) {
-  if (id) {
-    const idx = schedules.findIndex(s => s.id === id);
-    if (idx > -1) schedules[idx] = { id, ...data };
-  } else {
+function persistScheduleAddMany(items) {
+  items.forEach(data => {
     schedules.push({ id: 'sc' + Date.now() + Math.random().toString(36).slice(2, 7), ...data });
-  }
-  save();
-  render();
-}
-
-function persistScheduleDelete(id) {
-  schedules = schedules.filter(s => s.id !== id);
+  });
   save();
   render();
 }
@@ -978,9 +972,9 @@ function resetAll() {
 // ================================================================
 // ADD / EDIT MODAL
 // ================================================================
-function openAddModal(id, prefill) {
+function openAddModal(id) {
   ui.editingId = id || null;
-  const e = id ? entries.find(x => x.id === id) : prefill;
+  const e = id ? entries.find(x => x.id === id) : null;
 
   ui.formType = e ? e.type : '경사';
   ui.formDirection = e ? e.direction : '보냄';
@@ -1007,7 +1001,6 @@ function openAddModal(id, prefill) {
 function closeAddModal() {
   document.getElementById('add-modal').classList.remove('open');
   ui.editingId = null;
-  ui.convertingScheduleId = null;
 }
 
 function renderFormType() {
@@ -1068,12 +1061,9 @@ function saveEntry() {
   if (!amount) { alert('금액을 입력해 주세요.'); return; }
 
   const data = { type: ui.formType, item, direction: ui.formDirection, name, relation, amount, date, memo };
-  const convertingId = ui.convertingScheduleId;
 
   persistUpsert(ui.editingId, data);
   closeAddModal();
-
-  if (convertingId) persistScheduleDelete(convertingId);
 }
 
 function deleteFromModal() {
@@ -1086,10 +1076,9 @@ function deleteFromModal() {
 document.getElementById('add-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeAddModal(); });
 
 // ================================================================
-// SCHEDULES (경조사 일정 리마인더) — separate from actual money
-// records: register an upcoming event for someone so the app can
-// surface a reminder before/after the date, then convert it into a
-// real 기록 once the money is actually sent or received.
+// SCHEDULES (기억할 경조일정) — a lightweight reminder layer, separate
+// from actual money records. "열람"(view the calendar) + "알림"
+// (badge/banner) only; adding happens from the 사람 탭's '+'.
 // ================================================================
 function dayDiff(dateStr) {
   if (!dateStr) return 0;
@@ -1103,7 +1092,6 @@ function ddayLabel(diff) {
   return diff > 0 ? ('D-' + diff) : ('D+' + Math.abs(diff));
 }
 function ddayColor(diff) {
-  if (diff <= 0) return { bg: 'var(--red-tint2)', fg: 'var(--red)' };
   if (diff <= 7) return { bg: 'var(--red-tint2)', fg: 'var(--red)' };
   return { bg: 'var(--navy-tint2)', fg: 'var(--navy)' };
 }
@@ -1123,21 +1111,26 @@ function renderScheduleBanner() {
 
   if (!urgent.length) { wrap.innerHTML = ''; return; }
   const top = urgent[0];
-  const dirLabel = top.direction === '보냄' ? '보낼 예정' : '받을 예정';
   const moreTxt = urgent.length > 1 ? `외 ${urgent.length - 1}건` : '';
   wrap.innerHTML = `
     <div class="sch-banner" onclick="openScheduleModal()">
       <div class="dday">${ddayLabel(dayDiff(top.date))}</div>
       <div class="txt">
-        <div class="t1">${esc(top.name)} · ${esc(top.item)} (${dirLabel})</div>
+        <div class="t1">${esc(top.name)}${top.memo ? ' · ' + esc(top.memo) : ''}</div>
         <div class="t2">${dateShort(top.date)} ${moreTxt}</div>
       </div>
       <div class="more">전체보기 ›</div>
     </div>`;
 }
 
+// ---- calendar (열람/알림 전용, 추가 기능 없음) ----
 function openScheduleModal() {
-  renderScheduleList();
+  const upcoming = schedules.slice().sort((a, b) => dayDiff(a.date) - dayDiff(b.date))[0];
+  const base = upcoming ? new Date(upcoming.date + 'T00:00:00') : new Date();
+  ui.calYear = base.getFullYear();
+  ui.calMonth = base.getMonth();
+  ui.calSelectedDate = upcoming ? upcoming.date : todayStr();
+  renderCalendar();
   document.getElementById('schedule-modal').classList.add('open');
 }
 function closeScheduleModal() {
@@ -1145,137 +1138,121 @@ function closeScheduleModal() {
 }
 document.getElementById('schedule-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeScheduleModal(); });
 
-function renderScheduleList() {
-  const wrap = document.getElementById('schedule-list');
-  const list = schedules.slice().sort((a, b) => dayDiff(a.date) - dayDiff(b.date));
-  if (!list.length) {
-    wrap.innerHTML = `<div class="empty"><span>🔔</span><p>등록된 일정이 없습니다.<br>위 + 추가 버튼으로 등록해 보세요.</p></div>`;
+function calShift(delta) {
+  ui.calMonth += delta;
+  if (ui.calMonth < 0) { ui.calMonth = 11; ui.calYear--; }
+  if (ui.calMonth > 11) { ui.calMonth = 0; ui.calYear++; }
+  renderCalendar();
+}
+function calSelectDate(dateStr) {
+  ui.calSelectedDate = dateStr;
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const y = ui.calYear, m = ui.calMonth;
+  document.getElementById('cal-label').textContent = `${y}년 ${m + 1}월`;
+
+  const byDate = {};
+  schedules.forEach(s => { (byDate[s.date] = byDate[s.date] || []).push(s); });
+
+  const first = new Date(y, m, 1);
+  const startDow = first.getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const today = todayStr();
+
+  const cells = [];
+  for (let i = 0; i < startDow; i++) cells.push('<div class="cal-cell empty"></div>');
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const has = byDate[dateStr];
+    const cls = ['cal-cell'];
+    if (dateStr === today) cls.push('today');
+    if (dateStr === ui.calSelectedDate) cls.push('selected');
+    cells.push(`<div class="${cls.join(' ')}" onclick="calSelectDate('${dateStr}')"><span class="n">${d}</span>${has ? '<span class="dot"></span>' : ''}</div>`);
+  }
+  document.getElementById('cal-grid').innerHTML = cells.join('');
+
+  const dayEvents = byDate[ui.calSelectedDate] || [];
+  const wrap = document.getElementById('cal-day-list');
+  if (!dayEvents.length) {
+    wrap.innerHTML = `<div class="empty" style="padding:30px 24px"><span>🔔</span><p>${dateShort(ui.calSelectedDate)}에 등록된 일정이 없습니다.</p></div>`;
     return;
   }
-  wrap.innerHTML = list.map(s => {
-    const diff = dayDiff(s.date);
-    const c = ddayColor(diff);
-    const dirLabel = s.direction === '보냄' ? '보낼 예정' : '받을 예정';
-    const subParts = [s.relation, s.item, dirLabel, dateShort(s.date)].filter(Boolean);
+  wrap.innerHTML = `<div class="cal-day-hdr">${dateShort(ui.calSelectedDate)}</div>` + dayEvents.map(s => {
+    const c = ddayColor(dayDiff(s.date));
     return `<div class="sch-card">
-      <div class="dday" style="background:${c.bg};color:${c.fg}">${ddayLabel(diff)}</div>
-      <div class="body" onclick="openScheduleForm('${s.id}')">
+      <div class="dday" style="background:${c.bg};color:${c.fg}">${ddayLabel(dayDiff(s.date))}</div>
+      <div class="body">
         <div class="name">${esc(s.name)}</div>
-        <div class="meta">${esc(subParts.join(' · '))}</div>
-        ${s.memo ? `<div class="memo">${esc(s.memo)}</div>` : ''}
+        <div class="meta">${esc([s.relation, s.memo].filter(Boolean).join(' · '))}</div>
       </div>
-      <button class="conv" onclick="convertScheduleToEntry('${s.id}')">기록으로</button>
     </div>`;
   }).join('');
 }
 
-function openScheduleForm(id) {
-  ui.schEditingId = id || null;
-  const s = id ? schedules.find(x => x.id === id) : null;
+// ---- 사람 탭 '+' : 기억할 경조일정 등록 (n개 추가 가능) ----
+let pschedRows = [];
+let pschedKeySeq = 0;
 
-  ui.schType = s ? s.type : '경사';
-  ui.schDirection = s ? s.direction : '보냄';
-  const preset = ITEM_PRESETS[ui.schType];
-  ui.schItem = s ? (preset.includes(s.item) ? s.item : '직접입력') : preset[0];
-
-  document.getElementById('sch-sheet-title').textContent = id ? '일정 수정' : '일정 추가';
-  document.getElementById('sch-del-btn').style.display = id ? 'block' : 'none';
-  document.getElementById('sch-name').value = s ? s.name : '';
-  document.getElementById('sch-relation').value = s ? (s.relation || '기타') : '기타';
-  document.getElementById('sch-date').value = s ? s.date : '';
-  document.getElementById('sch-amount').value = (s && s.amount) ? won(s.amount) : '';
-  document.getElementById('sch-memo').value = s ? (s.memo || '') : '';
-  document.getElementById('sch-item-custom').value = (s && ui.schItem === '직접입력') ? s.item : '';
-
-  renderSchNameOptions();
-  renderSchType();
-  renderSchItems();
-  renderSchDirection();
-
-  document.getElementById('schedule-form-modal').classList.add('open');
+function openPersonScheduleForm() {
+  document.getElementById('psched-name').value = '';
+  document.getElementById('psched-relation').value = '기타';
+  pschedRows = [{ key: ++pschedKeySeq, date: '', memo: '' }];
+  renderPschedNameOptions();
+  renderPschedRows();
+  document.getElementById('person-schedule-modal').classList.add('open');
 }
-function closeScheduleForm() {
-  document.getElementById('schedule-form-modal').classList.remove('open');
-  ui.schEditingId = null;
+function closePersonScheduleForm() {
+  document.getElementById('person-schedule-modal').classList.remove('open');
 }
-document.getElementById('schedule-form-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeScheduleForm(); });
+document.getElementById('person-schedule-modal').addEventListener('click', e => { if (e.target === e.currentTarget) closePersonScheduleForm(); });
 
-function renderSchNameOptions() {
+function renderPschedNameOptions() {
   const names = new Set();
   aggregatePeople().forEach(p => names.add(p.name));
   schedules.forEach(s => names.add(s.name));
-  document.getElementById('sch-name-options').innerHTML =
+  document.getElementById('psched-name-options').innerHTML =
     [...names].map(n => `<option value="${escapeHtml(n)}">`).join('');
 }
-function onSchNameInput() {
-  const name = document.getElementById('sch-name').value.trim();
+function onPschedNameInput() {
+  const name = document.getElementById('psched-name').value.trim();
   const person = aggregatePeople().find(p => p.name === name);
-  if (person) document.getElementById('sch-relation').value = person.relation || '기타';
-}
-function onSchAmountInput() {
-  const el = document.getElementById('sch-amount');
-  const digits = el.value.replace(/[^0-9]/g, '');
-  el.value = digits ? won(Number(digits)) : '';
+  if (person) document.getElementById('psched-relation').value = person.relation || '기타';
 }
 
-function renderSchType() {
-  document.getElementById('sch-type-toggle').innerHTML = ['경사', '조사'].map(t =>
-    `<button class="opt${ui.schType === t ? ' active' : ''}" onclick="selectSchType('${t}')">${t}</button>`
-  ).join('');
+function renderPschedRows() {
+  document.getElementById('psched-rows').innerHTML = pschedRows.map(r => `
+    <div class="psched-row">
+      <input class="finp" type="date" value="${r.date}" onchange="updatePschedRow(${r.key}, 'date', this.value)">
+      <input class="finp" placeholder="무슨 일정인가요? (예: 결혼식)" value="${escapeHtml(r.memo)}" oninput="updatePschedRow(${r.key}, 'memo', this.value)">
+      ${pschedRows.length > 1 ? `<button class="psched-remove" onclick="removePschedRow(${r.key})">✕</button>` : ''}
+    </div>`).join('');
 }
-function selectSchType(t) {
-  ui.schType = t;
-  ui.schItem = ITEM_PRESETS[t][0];
-  renderSchType(); renderSchItems();
+function updatePschedRow(key, field, value) {
+  const row = pschedRows.find(r => r.key === key);
+  if (row) row[field] = value;
 }
-function renderSchItems() {
-  const preset = ITEM_PRESETS[ui.schType].concat(['직접입력']);
-  document.getElementById('sch-item-chips').innerHTML = preset.map(i =>
-    `<button class="item-chip${ui.schItem === i ? ' active' : ''}" onclick="selectSchItem('${esc(i)}')">${i}</button>`
-  ).join('');
-  document.getElementById('sch-item-custom-wrap').style.display = ui.schItem === '직접입력' ? 'block' : 'none';
+function addPschedRow() {
+  pschedRows.push({ key: ++pschedKeySeq, date: '', memo: '' });
+  renderPschedRows();
 }
-function selectSchItem(i) { ui.schItem = i; renderSchItems(); }
-function renderSchDirection() {
-  document.getElementById('sch-dir-toggle').innerHTML = ['보냄', '받음'].map(d =>
-    `<button class="opt dir-${d}${ui.schDirection === d ? ' active' : ''}" onclick="selectSchDirection('${d}')">${d === '보냄' ? '보낼 예정' : '받을 예정'}</button>`
-  ).join('');
+function removePschedRow(key) {
+  pschedRows = pschedRows.filter(r => r.key !== key);
+  renderPschedRows();
 }
-function selectSchDirection(d) { ui.schDirection = d; renderSchDirection(); }
 
-function saveSchedule() {
-  const item = ui.schItem === '직접입력' ? document.getElementById('sch-item-custom').value.trim() : ui.schItem;
-  const name = document.getElementById('sch-name').value.trim();
-  const date = document.getElementById('sch-date').value;
-  const relation = document.getElementById('sch-relation').value;
-  const amount = Number((document.getElementById('sch-amount').value || '').replace(/[^0-9]/g, '')) || 0;
-  const memo = document.getElementById('sch-memo').value.trim();
-
+function savePersonSchedule() {
+  const name = document.getElementById('psched-name').value.trim();
+  const relation = document.getElementById('psched-relation').value;
   if (!name) { alert('이름을 입력해 주세요.'); return; }
-  if (!item) { alert('경조사 항목을 입력해 주세요.'); return; }
-  if (!date) { alert('날짜를 선택해 주세요.'); return; }
 
-  const data = { type: ui.schType, item, direction: ui.schDirection, name, relation, amount, date, memo };
-  persistScheduleUpsert(ui.schEditingId, data);
-  closeScheduleForm();
-  renderScheduleList();
-  toast('일정을 저장했어요');
-}
+  const valid = pschedRows.filter(r => r.date);
+  if (!valid.length) { alert('날짜를 하나 이상 입력해 주세요.'); return; }
 
-function deleteScheduleFromForm() {
-  if (!ui.schEditingId) return;
-  if (!confirm('이 일정을 삭제하시겠습니까?')) return;
-  persistScheduleDelete(ui.schEditingId);
-  closeScheduleForm();
-  renderScheduleList();
-}
-
-function convertScheduleToEntry(id) {
-  const s = schedules.find(x => x.id === id);
-  if (!s) return;
-  ui.convertingScheduleId = id;
-  closeScheduleModal();
-  openAddModal(null, s);
+  persistScheduleAddMany(valid.map(r => ({ name, relation, date: r.date, memo: r.memo.trim() })));
+  closePersonScheduleForm();
+  toast(`일정 ${valid.length}건을 등록했어요`);
 }
 
 // ================================================================

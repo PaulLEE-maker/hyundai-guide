@@ -19,7 +19,7 @@
   --bdr:rgba(16,20,24,.08);
   --good:#3f7c5c;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 body{font-family:'NanumSquare',-apple-system,'Malgun Gothic',sans-serif;background:#e7eaf0;color:var(--ink)}
 .mono{font-family:'NanumSquare',sans-serif;font-variant-numeric:tabular-nums}
 button{font-family:inherit;cursor:pointer}
@@ -93,8 +93,8 @@ input,textarea{font-family:inherit}
 /* ---- '기억할 경조일정' rows inside the 기록 추가/수정 폼 ---- */
 .psched-rows{display:flex;flex-direction:column;gap:10px}
 .psched-row{display:flex;gap:8px;align-items:center}
-.psched-row .finp{flex:1}
-.psched-row input[type=date]{flex:0 0 132px}
+.psched-row .finp{flex:1;height:44px;padding:0 12px;line-height:41px}
+.psched-row input[type=date]{flex:0 0 118px;min-width:0;height:44px;padding:0 8px;line-height:41px;font-size:12.5px}
 .psched-remove{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:none;background:var(--bg);color:var(--muted3);font-size:13px}
 .psched-add{margin-top:2px;background:none;border:1.5px dashed var(--bdr);border-radius:12px;padding:10px;color:var(--muted3);font:500 12.5px 'NanumSquare',sans-serif;width:100%}
 
@@ -116,7 +116,7 @@ input,textarea{font-family:inherit}
 
 /* ---- people tab ---- */
 .people-list{padding:0 18px;display:flex;flex-direction:column;gap:11px}
-.p-card{background:#fff;border-radius:20px;padding:16px 17px;box-shadow:0 1px 3px rgba(16,20,24,.08)}
+.p-card{background:#fff;border-radius:20px;padding:16px 17px;box-shadow:0 1px 3px rgba(16,20,24,.08);cursor:pointer}
 .p-top{display:flex;align-items:center;gap:12px}
 .p-avatar{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font:600 15px 'NanumSquare',sans-serif;flex-shrink:0}
 .p-info{flex:1;min-width:0}
@@ -191,6 +191,8 @@ input,textarea{font-family:inherit}
 .sheet-hd .title{font:600 15px 'NanumSquare',sans-serif;color:var(--ink)}
 .sheet-hd .save{font:600 13px 'NanumSquare',sans-serif;color:var(--navy)}
 .sheet-body{overflow-y:auto;padding:4px 20px 24px;display:flex;flex-direction:column;gap:18px}
+.sheet-body>div{min-width:0}
+.sheet-body input[type=date]{min-width:0;max-width:100%}
 .field-lbl{font:500 11px 'NanumSquare',sans-serif;letter-spacing:.08em;color:var(--muted2);margin-bottom:9px;font-variant-numeric:tabular-nums}
 .toggle2{display:flex;gap:8px}
 .toggle2 .opt{flex:1;text-align:center;padding:12px 0;border-radius:14px;background:var(--bg);color:var(--muted3);font:400 13.5px 'NanumSquare',sans-serif;border:none}
@@ -203,6 +205,7 @@ input,textarea{font-family:inherit}
 .finp{width:100%;border:1.5px solid var(--bdr);border-radius:14px;padding:12px 14px;font-size:14px;outline:none;color:var(--ink);background:var(--bg)}
 .finp:focus{border-color:var(--navy)}
 .frow2{display:flex;gap:10px}
+.frow2>div{min-width:0;flex:1}
 .frow2 > div{flex:1}
 .amt-box{background:var(--bg);border-radius:20px;padding:18px}
 .amt-input{width:100%;border:none;background:transparent;outline:none;font:600 34px 'NanumSquare',sans-serif;color:var(--ink);padding-bottom:12px;border-bottom:2px solid var(--ink);font-variant-numeric:tabular-nums}
@@ -756,7 +759,7 @@ function renderPeople() {
     else if (net < 0) { tagLabel = '낸 쪽'; tagColor = 'var(--red)'; tagBg = 'var(--red-tint2)'; netColor = 'var(--red)'; }
     else { tagLabel = '균형'; tagColor = 'var(--muted3)'; tagBg = 'var(--navy-tint)'; netColor = 'var(--muted3)'; }
     const netTxt = net === 0 ? '0' : (net > 0 ? '+' : '−') + won(Math.abs(net));
-    return `<div class="p-card">
+    return `<div class="p-card" onclick="openPersonEntries('${esc(p.name)}')">
       <div class="p-top">
         <div class="p-avatar" style="background:var(--navy-tint);color:var(--navy)">${esc(initial)}</div>
         <div class="p-info"><div class="p-name">${esc(p.name)}</div><div class="p-meta">${esc(p.relation || '기타')} · ${p.count}건</div></div>
@@ -769,6 +772,21 @@ function renderPeople() {
       <div class="p-legend"><span>냄 ${won(p.sent)}</span><span>받음 ${won(p.received)}</span></div>
     </div>`;
   }).join('');
+}
+
+function openPersonEntries(name) {
+  const matches = entries.filter(e => e.name === name);
+  if (matches.length === 1) {
+    switchTab('home');
+    openAddModal(matches[0].id);
+    return;
+  }
+  switchTab('home');
+  ui.homeFilter = 'all';
+  ui.homeSearchOpen = true;
+  document.getElementById('home-search-wrap').style.display = 'block';
+  document.getElementById('home-search').value = name;
+  renderHome();
 }
 
 // ================================================================

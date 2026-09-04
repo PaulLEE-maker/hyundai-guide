@@ -2,6 +2,26 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<script>
+// iOS 홈 화면 앱은 캐시가 매우 끈질겨서, 서비스워커만으로는 갱신이 안 되는 경우가 있다.
+// 그래서 절대 캐시되지 않는 별도의 작은 버전 파일을 매번 직접 확인해서,
+// 버전이 다르면 (캐시를 무조건 우회하는) 새 주소로 강제 이동시킨다.
+(function () {
+  var CURRENT_VERSION = 1;
+  try {
+    if (sessionStorage.getItem('vcheck_done')) return; // 한 세션에 한 번만 시도 (무한 새로고침 방지)
+    fetch('version.json?_=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (data && typeof data.v === 'number' && data.v !== CURRENT_VERSION) {
+          sessionStorage.setItem('vcheck_done', '1');
+          location.href = location.pathname + '?_v=' + data.v;
+        }
+      })
+      .catch(function () {});
+  } catch (e) {}
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <link rel="preconnect" href="https://www.gstatic.com">
 <link rel="preconnect" href="https://firestore.googleapis.com">

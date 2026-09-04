@@ -42,7 +42,9 @@ input,textarea{font-family:inherit}
 
 /* ---- header / summary (home) ---- */
 .hd{display:flex;justify-content:space-between;align-items:center;padding:20px 18px 12px;cursor:pointer}
+.hd-title-wrap{display:flex;flex-direction:column;gap:3px}
 .hd-title{font:600 19px 'NanumSquare',sans-serif;color:var(--ink)}
+.hd-sub{font:400 11px 'NanumSquare',sans-serif;color:var(--muted2)}
 .hd-icons{display:flex;gap:8px}
 .icon-btn{width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(16,20,24,.10);border:none;display:flex;align-items:center;justify-content:center;color:var(--muted3);font-size:18px;position:relative}
 .icon-btn .dot{position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 3px;border-radius:8px;background:var(--red);color:#fff;font:600 9.5px 'NanumSquare',sans-serif;display:flex;align-items:center;justify-content:center}
@@ -248,7 +250,10 @@ input,textarea{font-family:inherit}
   <!-- ===== HOME ===== -->
   <div class="screen active" id="screen-home">
     <div class="hd" onclick="scrollActiveToTop(event)">
-      <div class="hd-title">마음기록</div>
+      <div class="hd-title-wrap">
+        <div class="hd-title">마음기록</div>
+        <div class="hd-sub">놓치지 말아야할 마음의 기록</div>
+      </div>
       <div class="hd-icons">
         <button class="icon-btn" onclick="openScheduleModal()">🔔<span class="dot" id="sch-badge-dot" style="display:none">0</span></button>
         <button class="icon-btn" onclick="toggleHomeSearch()">⌕</button>

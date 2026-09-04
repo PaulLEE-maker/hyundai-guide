@@ -179,6 +179,7 @@ input,textarea{font-family:inherit}
 
 /* ---- bottom nav ---- */
 .bottomnav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-around;padding:14px 0 max(16px,calc(14px + env(safe-area-inset-bottom)));z-index:60}
+.bottomnav.kb-hide{display:none}
 .nav-btn{background:none;border:none;font:400 12.5px 'NanumSquare',sans-serif;color:rgba(16,20,24,.4);display:flex;flex-direction:column;align-items:center;gap:4px}
 .nav-btn.active{font-weight:600;color:var(--navy)}
 .nav-fab{width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;border:none;display:flex;align-items:center;justify-content:center;font-size:27px;font-weight:300;margin-top:-28px;box-shadow:0 6px 16px rgba(192,68,47,.34)}
@@ -434,6 +435,7 @@ let ui = {
   formItem: '결혼',
   formDirection: '보냄',
   editingId: null,
+  returnTab: null,
   calYear: new Date().getFullYear(),
   calMonth: new Date().getMonth(),
   calSelectedDate: null
@@ -477,25 +479,29 @@ function save() {
 }
 
 function persistUpsert(id, data) {
+  const entryId = id || ('e' + Date.now() + Math.random().toString(36).slice(2, 7));
   if (id) {
     const idx = entries.findIndex(e => e.id === id);
     if (idx > -1) entries[idx] = { id, ...data };
   } else {
-    entries.push({ id: 'e' + Date.now() + Math.random().toString(36).slice(2, 7), ...data });
+    entries.push({ id: entryId, ...data });
   }
   save();
   render();
+  return entryId;
 }
 
 function persistDeleteMany(ids) {
   entries = entries.filter(e => !ids.includes(e.id));
+  schedules = schedules.filter(s => !ids.includes(s.entryId));
   save();
   render();
 }
 
-function persistScheduleAddMany(items) {
+function persistScheduleSetForEntry(entryId, items) {
+  schedules = schedules.filter(s => s.entryId !== entryId);
   items.forEach(data => {
-    schedules.push({ id: 'sc' + Date.now() + Math.random().toString(36).slice(2, 7), ...data });
+    schedules.push({ id: 'sc' + Date.now() + Math.random().toString(36).slice(2, 7), entryId, ...data });
   });
   save();
   render();
@@ -779,6 +785,7 @@ function renderPeople() {
 
 function openPersonEntries(name) {
   const matches = entries.filter(e => e.name === name);
+  ui.returnTab = 'people';
   if (matches.length === 1) {
     switchTab('home');
     openAddModal(matches[0].id);
@@ -982,7 +989,10 @@ function openAddModal(id) {
   renderFormDirection();
   renderFormAmountChips();
 
-  pschedRows = [{ key: ++pschedKeySeq, date: '', memo: '' }];
+  const existingSched = id ? schedules.filter(s => s.entryId === id) : [];
+  pschedRows = existingSched.length
+    ? existingSched.map(s => ({ key: ++pschedKeySeq, date: s.date, memo: s.memo || '' }))
+    : [{ key: ++pschedKeySeq, date: '', memo: '' }];
   renderPschedRows();
 
   document.getElementById('add-modal').classList.add('open');
@@ -991,6 +1001,11 @@ function openAddModal(id) {
 function closeAddModal() {
   document.getElementById('add-modal').classList.remove('open');
   ui.editingId = null;
+  if (ui.returnTab) {
+    const target = ui.returnTab;
+    ui.returnTab = null;
+    switchTab(target);
+  }
 }
 
 function renderFormType() {
@@ -1052,10 +1067,10 @@ function saveEntry() {
 
   const data = { type: ui.formType, item, direction: ui.formDirection, name, relation, amount, date, memo };
 
-  persistUpsert(ui.editingId, data);
+  const entryId = persistUpsert(ui.editingId, data);
 
   const schedItems = pschedRows.filter(r => r.date).map(r => ({ name, relation, date: r.date, memo: r.memo.trim() }));
-  if (schedItems.length) persistScheduleAddMany(schedItems);
+  persistScheduleSetForEntry(entryId, schedItems);
 
   closeAddModal();
 }
@@ -1228,6 +1243,20 @@ function toast(msg) {
 // INIT
 // ================================================================
 window.cloudSync.onAuthChange(() => { if (ui.tab === 'settings') renderSettings(); });
+
+document.addEventListener('focusin', e => {
+  if (e.target.matches('input, textarea, select')) {
+    const nav = document.querySelector('.bottomnav');
+    if (nav) nav.classList.add('kb-hide');
+  }
+});
+document.addEventListener('focusout', e => {
+  if (e.target.matches('input, textarea, select')) {
+    const nav = document.querySelector('.bottomnav');
+    if (nav) nav.classList.remove('kb-hide');
+  }
+});
+
 load();
 </script>
 

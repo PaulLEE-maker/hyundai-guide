@@ -456,6 +456,13 @@ let ui = {
 // in through window.__gyeongjoApp.setData(). Same pattern as the trip
 // planner app: local-first, cloud sync is an optional add-on.
 // ================================================================
+function pruneOrphanSchedules() {
+  const validIds = new Set(entries.map(e => e.id));
+  const before = schedules.length;
+  schedules = schedules.filter(s => validIds.has(s.entryId));
+  return schedules.length !== before;
+}
+
 function load() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -464,6 +471,7 @@ function load() {
       entries = parsed.entries;
       schedules = Array.isArray(parsed.schedules) ? parsed.schedules : [];
       updatedAt = parsed.updatedAt || 0;
+      if (pruneOrphanSchedules()) persistLocal();
     } else {
       // first-ever visit: seed with example entries so the app isn't a blank shell
       entries = INITIAL_ENTRIES.map(e => ({ ...e }));
@@ -535,6 +543,7 @@ window.__gyeongjoApp = {
     entries = (newData && newData.entries) || [];
     schedules = (newData && newData.schedules) || [];
     updatedAt = ts || Date.now();
+    pruneOrphanSchedules();
     persistLocal();
     render();
     if (ui.tab === 'settings') renderSettings();

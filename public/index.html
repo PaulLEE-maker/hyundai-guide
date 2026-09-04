@@ -155,8 +155,8 @@ input,textarea{font-family:inherit}
 .toggle2{display:flex;gap:8px}
 .toggle2 .opt{flex:1;text-align:center;padding:12px 0;border-radius:14px;background:var(--bg);color:var(--muted3);font:400 13.5px 'NanumSquare',sans-serif;border:none}
 .toggle2 .opt.active{background:var(--ink);color:#fff}
-.toggle2 .opt.active.dir-보냄{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(47,74,122,.26)}
-.toggle2 .opt.active.dir-받음{background:var(--red);color:#fff;box-shadow:0 4px 12px rgba(192,68,47,.26)}
+.toggle2 .opt.active.dir-보냄{background:var(--red);color:#fff;box-shadow:0 4px 12px rgba(192,68,47,.26)}
+.toggle2 .opt.active.dir-받음{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(47,74,122,.26)}
 .item-chips{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
 .item-chip{padding:7px 13px;border-radius:18px;background:var(--bg);color:var(--muted3);font:400 12px 'NanumSquare',sans-serif;border:none}
 .item-chip.active{background:var(--ink);color:#fff}
@@ -168,8 +168,8 @@ input,textarea{font-family:inherit}
 .amt-input{width:100%;border:none;background:transparent;outline:none;font:600 34px 'NanumSquare',sans-serif;color:var(--ink);padding-bottom:12px;border-bottom:2px solid var(--ink);font-variant-numeric:tabular-nums}
 .amt-chips{display:flex;gap:7px;margin-top:13px}
 .amt-chip{flex:1;text-align:center;padding:10px 0;border-radius:12px;background:#fff;font:500 12.5px 'NanumSquare',sans-serif;color:var(--muted3);border:none;font-variant-numeric:tabular-nums}
-.amt-chip.active.dir-보냄{background:var(--navy);color:#fff;font-weight:600}
-.amt-chip.active.dir-받음{background:var(--red);color:#fff;font-weight:600}
+.amt-chip.active.dir-보냄{background:var(--red);color:#fff;font-weight:600}
+.amt-chip.active.dir-받음{background:var(--navy);color:#fff;font-weight:600}
 .ftextarea{width:100%;border:1.5px solid var(--bdr);border-radius:14px;padding:13px 14px;font-size:13px;outline:none;resize:vertical;min-height:52px;background:var(--bg);color:var(--ink)}
 .sheet-foot{padding:6px 20px calc(20px + env(safe-area-inset-bottom))}
 .btn-save{width:100%;padding:16px;border:none;border-radius:16px;background:var(--ink);color:#fff;font:600 15px 'NanumSquare',sans-serif}
@@ -328,8 +328,8 @@ input,textarea{font-family:inherit}
 const STORAGE_KEY = 'gyeongjo_v2_entries';
 const ITEM_PRESETS = { '경사': ['결혼','출산·돌','개업','승진'], '조사': ['장례','문병','기타'] };
 const RELATIONS = ['가족','친구','직장','기타'];
-const PALETTE_SENT = ['#2f4a7a','#5c7aab','#8fa3c4','#c3cfe0'];
-const PALETTE_RECEIVED = ['#c0442f','#d1725c','#e0a696','#f2dfdb'];
+const PALETTE_SENT = ['#c0442f','#d1725c','#e0a696','#f2dfdb'];
+const PALETTE_RECEIVED = ['#2f4a7a','#5c7aab','#8fa3c4','#c3cfe0'];
 
 const INITIAL_ENTRIES = [
   { id: 's1', type: '경사', item: '결혼', direction: '보냄', name: '김민준', relation: '직장', amount: 100000, date: '2026-03-14', memo: '청첩장 받고 참석', sample: true },
@@ -559,12 +559,12 @@ function rowHtml(e) {
   const isReceived = e.direction === '받음';
   let badgeBg, badgeColor, badgeLabel;
   if (isReceived) {
-    badgeBg = 'var(--red)'; badgeColor = '#fff'; badgeLabel = '받음';
+    badgeBg = 'var(--navy)'; badgeColor = '#fff'; badgeLabel = '받음';
   } else {
-    badgeBg = 'var(--navy)'; badgeColor = '#fff';
+    badgeBg = 'var(--red)'; badgeColor = '#fff';
     badgeLabel = e.item.length <= 2 ? e.item : e.item.slice(0, 2);
   }
-  const amtColor = isReceived ? 'var(--red)' : 'var(--navy)';
+  const amtColor = isReceived ? 'var(--navy)' : 'var(--red)';
   const amtTxt = (isReceived ? '+' : '−') + won(e.amount);
   const subParts = [e.relation, dateShort(e.date)];
   if (e.memo) subParts.push(e.memo);
@@ -639,8 +639,8 @@ function renderPeople() {
     const sentPct = Math.round((p.sent / total) * 100);
     const initial = (p.name || '?').slice(0, 1);
     let tagLabel, tagColor, tagBg, netColor;
-    if (net > 0) { tagLabel = '받은 쪽'; tagColor = 'var(--red)'; tagBg = 'var(--red-tint2)'; netColor = 'var(--red)'; }
-    else if (net < 0) { tagLabel = '낸 쪽'; tagColor = 'var(--navy)'; tagBg = 'var(--navy-tint2)'; netColor = 'var(--navy)'; }
+    if (net > 0) { tagLabel = '받은 쪽'; tagColor = 'var(--navy)'; tagBg = 'var(--navy-tint2)'; netColor = 'var(--navy)'; }
+    else if (net < 0) { tagLabel = '낸 쪽'; tagColor = 'var(--red)'; tagBg = 'var(--red-tint2)'; netColor = 'var(--red)'; }
     else { tagLabel = '균형'; tagColor = 'var(--muted3)'; tagBg = 'var(--navy-tint)'; netColor = 'var(--muted3)'; }
     const netTxt = net === 0 ? '0' : (net > 0 ? '+' : '−') + won(Math.abs(net));
     return `<div class="p-card">
@@ -652,7 +652,7 @@ function renderPeople() {
           <span class="p-tag" style="background:${tagBg};color:${tagColor}">${tagLabel}</span>
         </div>
       </div>
-      <div class="p-bar"><div style="width:${sentPct}%;background:var(--navy)"></div><div style="width:${100 - sentPct}%;background:var(--red)"></div></div>
+      <div class="p-bar"><div style="width:${sentPct}%;background:var(--red)"></div><div style="width:${100 - sentPct}%;background:var(--navy)"></div></div>
       <div class="p-legend"><span>냄 ${won(p.sent)}</span><span>받음 ${won(p.received)}</span></div>
     </div>`;
   }).join('');
@@ -681,7 +681,7 @@ function renderStats() {
   const totalReceived = received.reduce((s, e) => s + e.amount, 0);
 
   const dirLabel = ui.statsDir === 'sent' ? '보낸' : '받은';
-  const dirColor = ui.statsDir === 'sent' ? 'var(--navy)' : 'var(--red)';
+  const dirColor = ui.statsDir === 'sent' ? 'var(--red)' : 'var(--navy)';
   const detail = ui.statsDir === 'sent' ? sent : received;
   const detailTotal = ui.statsDir === 'sent' ? totalSent : totalReceived;
   const avg = detail.length ? Math.round(detailTotal / detail.length) : 0;
@@ -749,11 +749,11 @@ function renderStats() {
       <div class="stat-split">
         <div class="stat-split-item">
           <div class="stat-split-lbl">보낸 금액</div>
-          <div class="stat-split-val" style="color:var(--navy)">${won(totalSent)}<span class="u">원</span></div>
+          <div class="stat-split-val" style="color:var(--red)">${won(totalSent)}<span class="u">원</span></div>
         </div>
         <div class="stat-split-item">
           <div class="stat-split-lbl">받은 금액</div>
-          <div class="stat-split-val" style="color:var(--red)">${won(totalReceived)}<span class="u">원</span></div>
+          <div class="stat-split-val" style="color:var(--navy)">${won(totalReceived)}<span class="u">원</span></div>
         </div>
       </div>
     </div>
